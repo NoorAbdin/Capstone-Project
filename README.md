@@ -58,3 +58,12 @@ The main goal of the application is to reduce food waste, make meal planning eas
 | Day 5 | UI design and styling (clean, warm kitchen-themed interface) |
 | Day 6 | Testing, bug fixes, and final adjustments |
 | Day 7 |  and final project review/presentation |
+
+## 7. Future Work
+In future versions of **Smart Pantry**, the following features can be added:  
+
+- **Notifications/Alerts:** Notify users when items are nearing expiration to further reduce food waste.  
+- **Shopping List:** Allow users to create and manage shopping lists based on items they need to restock.  
+- **User-Created Recipes:** Enable users to create and save their own recipes, linking them to pantry items for easier planning.  
+- **Advanced Filtering/Sorting:** Filter items by category, expiration date, or quantity for faster management.  
+- **Favorites and History:** Allow users to mark favorite recipes and track frequently used items.  
