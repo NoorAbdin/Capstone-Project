@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Smart Pantry{% endblock %}
+
+{% block content %}
+<div class="home-container">
+    <h1>Welcome to Smart Pantry</h1>
+    <p>Organize your kitchen, reduce waste, and get recipe ideas from what you already have!</p>
+
+    {% if not user.is_authenticated %}
+    <div class="auth-links">
+        <a href="{% url 'login' %}" class="btn">Login</a>
+        <a href="{% url 'register' %}" class="btn">Register</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
