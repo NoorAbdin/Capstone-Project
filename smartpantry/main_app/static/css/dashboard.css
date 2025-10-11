@@ -1,0 +1,211 @@
+
+.dashboard-hero {
+    margin: 40px 0 50px 0;
+    text-align: center;
+}
+
+.welcome-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.hero-subtext {
+    font-size: 1.1rem;
+    color: var(--color-text-muted);
+}
+
+/* --- Quick Dashboard Grid --- */
+.quick-dashboard-grid {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.card {
+    flex: 1;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px var(--color-shadow);
+    display: flex;
+    flex-direction: column;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.card-header h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.card-icon {
+    font-size: 1.5rem;
+    margin-right: 10px;
+}
+
+/* Expiring Card Styling */
+.expiring-card {
+    background-color: #ffe8d3;
+    border: 1px solid #f0ad4e;
+}
+
+.expiring-card .card-header {
+    color: #f0ad4e; 
+}
+
+.expiring-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.expiring-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+    font-size: 1.05rem;
+}
+
+.expiring-list li:last-child {
+    border-bottom: none;
+}
+
+.item-name {
+    font-weight: 600;
+}
+
+.item-days {
+    color: #dc3545;
+    font-weight: 700;
+}
+
+/* Recipes Card Styling */
+.recipes-card {
+    background-color: #e0f2e0;
+    border: 1px solid #5cb85c;
+}
+
+.recipes-card .card-header {
+    color: #5cb85c;
+}
+
+.recipe-grid-small {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.recipe-item {
+    background-color: white;
+    padding: 15px 10px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 600;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.card-link {
+    color: var(--color-primary-orange);
+    text-decoration: none;
+    font-weight: 600;
+    margin-top: auto;
+    padding-top: 10px;
+}
+
+.card-link:hover {
+    text-decoration: underline;
+}
+
+/* --- Action Buttons Grid --- */
+.action-buttons-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1.8fr 1.2fr; 
+    gap: 30px;
+    margin-bottom: 80px;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 25px 20px;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn-icon {
+    font-size: 1.8rem;
+    margin-right: 10px;
+}
+
+.add-item-btn {
+    background-color: #6c9d46; 
+    color: white;
+}
+
+.add-item-btn:hover {
+    background-color: #5a853a;
+    transform: translateY(-2px);
+}
+
+.manage-recipes-btn {
+    background-color: #d9534f; 
+    color: white;
+}
+
+.manage-recipes-btn:hover {
+    background-color: #c04541;
+    transform: translateY(-2px);
+}
+
+/* Search Input Styling */
+.search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background-color: #f7f3e8;
+    border-radius: 10px;
+    padding: 15px 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.search-input {
+    flex-grow: 1;
+    border: none;
+    background: transparent;
+    padding: 5px 10px;
+    font-size: 1.1rem;
+    color: var(--color-text-dark);
+}
+
+.search-input:focus {
+    outline: none;
+}
+
+.search-icon {
+    font-size: 1.2rem;
+    color: var(--color-text-muted);
+    margin-right: 5px;
+}
+
+/* --- Responsive Adjustments for Dashboard --- */
+@media (max-width: 900px) {
+    .quick-dashboard-grid {
+        flex-direction: column;
+    }
+    .action-buttons-grid {
+        grid-template-columns: 1fr;
+    }
+    .search-container {
+        order: 2; 
+    }
+}

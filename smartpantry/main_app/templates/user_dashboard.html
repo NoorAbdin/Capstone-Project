@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dashboard - Smart Pantry{% endblock %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+{% block content %}
+
+    <section class="dashboard-hero">
+        <h1 class="welcome-title">Welcome back, {{ user.username|default:"User" }}!</h1>
+        <p class="hero-subtext">Here's your quick snapshot to stop waste and start cooking.</p>
+    </section>
+
+    <section class="quick-dashboard-grid">
+
+        <div class="card expiring-card">
+            <div class="card-header">
+                <span class="card-icon expiring-icon">⚠️</span>
+                <h2>Expiring Soon</h2>
+            </div>
+            
+            <ul class="expiring-list">
+                <li>
+                    <span class="item-name">Milk</span> 
+                    <span class="item-days">(2 days)</span>
+                </li>
+                <li>
+                    <span class="item-name">Spinach</span> 
+                    <span class="item-days">(3 days)</span>
+                </li>
+                <li class="placeholder-item">
+                    <span class="item-name">Yogurt</span> 
+                    <span class="item-days">(4 days)</span>
+                </li>
+            </ul>
+            
+            <a href="#" class="card-link">View All Expiring Items</a>
+        </div>
+
+        <div class="card recipes-card">
+            <div class="card-header">
+                <span class="card-icon recipes-icon">🍽️</span>
+                <h2>Recipes To Make Now</h2>
+            </div>
+            
+            <div class="recipe-grid-small">
+                <div class="recipe-item">
+                    <span class="recipe-emoji">🍅</span> Tomato Soup
+                </div>
+                <div class="recipe-item">
+                    <span class="recipe-emoji">🥕</span> Veggie Stir-Fry
+                </div>
+            </div>
+            
+            <a href="#" class="card-link">See More Suggested Recipes</a>
+        </div>
+
+    </section>
+
+    <section class="action-buttons-grid">
+        
+        <a href="#" class="action-btn add-item-btn">
+            <span class="btn-icon">+</span>
+            Add New Item
+        </a>
+        
+        <div class="search-container">
+            <input type="text" placeholder="Search Inventory" class="search-input">
+            <span class="search-icon">🔍</span>
+        </div>
+        
+        <a href="#" class="action-btn manage-recipes-btn">
+            <span class="btn-icon">⚙️</span>
+            Manage Recipes
+        </a>
+        
+    </section>
+
+{% endblock content %}

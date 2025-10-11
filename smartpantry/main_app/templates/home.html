@@ -1,17 +1,55 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% load static %}
 
-{% block title %}Home - Smart Pantry{% endblock %}
+{% block title %}Stop Waste. Start Cooking - Smart Pantry{% endblock %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="home-container">
-    <h1>Welcome to Smart Pantry</h1>
-    <p>Organize your kitchen, reduce waste, and get recipe ideas from what you already have!</p>
+    <section class="hero-section">
+        <div class="hero-text">
+            <h1>Stop Waste.<br>Start Cooking.</h1>
+            <p class="lead">
+                Tired of throwing out spoiled food? Smart Pantry effortlessly tracks your kitchen inventory, sends expiration reminders, and instantly suggests recipes using only what you have on hand.
+            </p>
+            <div class="hero-cta-group">
+                <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Get Started Now</a>
+                 <a href="#features" class="btn btn-secondary btn-lg">Learn More</a>
+            </div>
+        </div>
+        <div class="hero-image">
+               <img src="{% static 'images/hero_section.jpg' %}" class="hero-image"> 
+        </div>
+    </section>
 
-    {% if not user.is_authenticated %}
-    <div class="auth-links">
-        <a href="{% url 'login' %}" class="btn">Login</a>
-        <a href="{% url 'register' %}" class="btn">Register</a>
-    </div>
-    {% endif %}
-</div>
-{% endblock %}
+    <section id="features" class="features-section">
+        <h2 class="section-title">Solve Your Biggest Kitchen Problems</h2>
+        <div class="features-grid">
+
+            <div class="feature-card">
+                <div class="feature-icon waste-icon">🗑️</div>
+                <h3 class="card-title">Eliminate Food Waste</h3>
+                <p class="card-text">Get automated warnings for items nearing expiration. Use your food before it goes bad, saving money and helping the environment.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon recipes-icon">🍽️</div>
+                <h3 class="card-title">Instant Recipe Suggestions</h3>
+                <p class="card-text">Never wonder what to cook again. Smart Pantry scans your current ingredients and gives you a list of recipes you can make right now.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon organize-icon">✨</div>
+                <h3 class="card-title">Digitize Your Kitchen</h3>
+                <p class="card-text">Maintain a digital inventory with categories and quantities. Know exactly what you have, where it is, and what you need, 24/7.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="final-cta">
+        <h3 class="cta-title">Ready to Take Control of Your Pantry?</h3>
+        <a href="{% url 'register' %}" class="btn btn-primary btn-xl">Start Your Account Today</a>
+    </section>
+
+{% endblock content %}
