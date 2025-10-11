@@ -1,0 +1,73 @@
+.form-page-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    min-height: 80vh; /* Ensures the card is centered vertically on larger screens */
+}
+
+.item-form-card {
+    /* Uses the existing .auth-card styles, but adjust width */
+    max-width: 500px;
+    width: 100%;
+    padding: 30px;
+}
+
+.item-form-card .auth-title {
+    color: var(--color-primary-green);
+    margin-bottom: 10px;
+}
+
+.item-form-card .auth-subtitle {
+    margin-bottom: 30px;
+    color: var(--color-text-dark);
+}
+
+.item-form-card .form-group {
+    margin-bottom: 20px;
+}
+
+/* Styling the input fields inside the form (targets all relevant inputs and select) */
+.item-form-card input[type="text"],
+.item-form-card input[type="number"],
+.item-form-card input[type="date"],
+.item-form-card select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+    box-sizing: border-box; /* Crucial: Ensures padding and border don't increase the total width */
+    margin-top: 5px;
+}
+
+.item-form-card input[type="text"]:focus,
+.item-form-card input[type="number"]:focus,
+.item-form-card input[type="date"]:focus,
+.item-form-card select:focus {
+    border-color: var(--color-primary-orange);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255, 140, 0, 0.2);
+}
+
+.field-error {
+    color: #e74c3c;
+    font-size: 0.85rem;
+    margin-top: 5px;
+}
+
+.item-form-card .auth-submit-btn {
+    margin-top: 15px;
+    width: 100%;
+}
+
+.item-form-card .auth-link {
+    color: var(--color-primary-green);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.item-form-card .auth-link:hover {
+    text-decoration: underline;
+}

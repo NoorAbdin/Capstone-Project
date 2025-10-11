@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block title %}Dashboard - Smart Pantry{% endblock %}
 {% block head %}
@@ -14,28 +15,35 @@
 
     <section class="quick-dashboard-grid">
 
-        <div class="card expiring-card">
+          <div class="card expiring-card">
             <div class="card-header">
                 <span class="card-icon expiring-icon">⚠️</span>
                 <h2>Expiring Soon</h2>
             </div>
             
             <ul class="expiring-list">
+                {% for item in expiring_soon %}
                 <li>
-                    <span class="item-name">Milk</span> 
-                    <span class="item-days">(2 days)</span>
+                    <span class="item-name">{{ item.name }}</span> 
+                    {% with days_left=item.expiration_date|timeuntil:today %}
+                        <span class="item-days">
+                            {% if days_left == "0 minutes" %}
+                                (Today)
+                            {% else %}
+                                ({{ days_left }})
+                            {% endif %}
+                        </span>
+                    {% endwith %}
                 </li>
-                <li>
-                    <span class="item-name">Spinach</span> 
-                    <span class="item-days">(3 days)</span>
-                </li>
+                {% empty %}
                 <li class="placeholder-item">
-                    <span class="item-name">Yogurt</span> 
-                    <span class="item-days">(4 days)</span>
+                    <span class="item-name">Nothing expiring in 7 days!</span> 
+                    <span class="item-days">🎉</span>
                 </li>
+                {% endfor %}
             </ul>
             
-            <a href="#" class="card-link">View All Expiring Items</a>
+            <a href="{% url 'my_pantry' %}" class="card-link">View All Items</a>
         </div>
 
         <div class="card recipes-card">
@@ -60,15 +68,10 @@
 
     <section class="action-buttons-grid">
         
-        <a href="#" class="action-btn add-item-btn">
+        <a href="{% url 'item_create' %}" class="action-btn add-item-btn">
             <span class="btn-icon">+</span>
             Add New Item
         </a>
-        
-        <div class="search-container">
-            <input type="text" placeholder="Search Inventory" class="search-input">
-            <span class="search-icon">🔍</span>
-        </div>
         
         <a href="#" class="action-btn manage-recipes-btn">
             <span class="btn-icon">⚙️</span>

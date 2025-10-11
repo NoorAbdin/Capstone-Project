@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load static %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/items/add_item.css' %}">
+{% endblock %}
+{% block title %}{{ title }} - Smart Pantry{% endblock %}
+
+{% block content %}
+
+    <div class="form-page-wrapper">
+        <div class="auth-card item-form-card">
+            <h1 class="auth-title">{{ title }}</h1>
+            <p class="auth-subtitle">Use the form below to {{ action|lower }} your inventory item.</p>
+
+            <form method="post" class="auth-form">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {% for error in form.non_field_errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% for field in form %}
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                        {{ field }}
+                        
+                        {# Display field-specific errors #}
+                        {% for error in field.errors %}
+                            <p class="field-error">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+
+                <button type="submit" class="btn btn-primary btn-xl auth-submit-btn">{{ action }} Item</button>
+            </form>
+            
+            <p class="auth-footer-text" style="margin-top: 20px;">
+                <a href="{% url 'my_pantry' %}" class="auth-link">&larr; Back to Inventory</a>
+            </p>
+        </div>
+    </div>
+
+{% endblock content %}

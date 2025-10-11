@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}My Pantry - Full Inventory{% endblock %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/items/pantry.css' %}">
+{% endblock %}
+{% block content %}
+
+    <section class="pantry-header">
+        <h1>My Full Inventory</h1>
+        
+        <a href="{% url 'item_create' %}" class="btn btn-primary btn-lg add-new-btn">
+            <span class="btn-icon">+</span> Add New Item
+        </a>
+    </section>
+
+
+   <form method="GET" action="{% url 'my_pantry' %}" class="pantry-controls-form">
+    <section class="pantry-controls">
+        <div class="filter-group">
+            <label for="category-filter">Category:</label>
+            <select id="category-filter" class="control-select" name="category" onchange="this.form.submit()">
+                <option value="all" {% if request.GET.category == 'all' or not request.GET.category %}selected{% endif %}>All Categories</option>
+                <option value="Produce" {% if request.GET.category == 'Produce' %}selected{% endif %}>Produce</option>
+                <option value="Dairy" {% if request.GET.category == 'Dairy' %}selected{% endif %}>Dairy</option>
+                <option value="Meat" {% if request.GET.category == 'Meat' %}selected{% endif %}>Meat & Seafood</option>
+                <option value="Pantry" {% if request.GET.category == 'Pantry' %}selected{% endif %}>Dry Goods/Pantry</option>
+                <option value="Frozen" {% if request.GET.category == 'Frozen' %}selected{% endif %}>Frozen</option>
+                <option value="Other" {% if request.GET.category == 'Other' %}selected{% endif %}>Other</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="sort-by">Sort By:</label>
+            <select id="sort-by" class="control-select" name="sort_by" onchange="this.form.submit()">
+                <option value="expiring" {% if request.GET.sort_by == 'expiring' or not request.GET.sort_by %}selected{% endif %}>Expiration Date</option>
+                <option value="name" {% if request.GET.sort_by == 'name' %}selected{% endif %}>Name (A-Z)</option>
+            </select>
+        </div>
+
+        <div class="search-box-pantry">
+            <input type="text" placeholder="Quick Search Inventory..." class="pantry-search-input" name="search" value="{{ request.GET.search|default:'' }}" onchange="this.form.submit()">
+            <span class="search-icon">🔍</span>
+  
+            {% if request.GET.search %}
+                <a href="{% url 'my_pantry' %}" class="text-xs text-red-500 ml-2">Clear</a>
+            {% endif %}
+        </div>
+    </section>
+</form>
+
+ <section class="inventory-table-section">
+    <table class="pantry-table">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th class="hide-on-mobile">Category</th>
+                <th>Qty</th>
+                <th>Expires</th>
+                <th class="hide-on-mobile">Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+                <tr class="item-row 
+                    {% if item.status == 'used' %}status-used
+                    {% elif item.expiration_date and item.expiration_date <= today %}status-danger
+                    {% elif item.expiration_date and item.expiration_date < today|date:"Y-m-d" %}status-danger
+                    {% elif item.expiration_date and item.expiration_date <= today|date:"Y-m-d"|add:"3" %}status-warning
+                    {% else %}status-safe
+                    {% endif %}">
+
+                        <td data-label="Item">{{ item.name }}</td>
+                        <td data-label="Category" class="hide-on-mobile">{{ item.category }}</td>
+                        <td data-label="Qty">{{ item.quantity }}</td>
+                        <td data-label="Expires">
+                            {% if item.expiration_date %}
+                                {{ item.expiration_date|date:"M d, Y" }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td data-label="Status" class="hide-on-mobile">
+                            {{ item.get_status_display }} 
+                        </td>
+                        <td data-label="Actions" class="action-buttons">
+                        
+                            <a href="{% url 'item_update' pk=item.pk %}" class="icon-btn edit-btn">✏️</a>
+                            
+                         <a href="{% url 'item_delete_confirm' pk=item.pk %}" class="icon-btn delete-btn" title="Delete {{ item.name }}">
+                         🗑️
+                        </a>
+                        </td>
+                    </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align: center;">You have no available items in your pantry. Start adding!</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock content %}

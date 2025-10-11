@@ -1,0 +1,203 @@
+
+.pantry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 0;
+    margin-bottom: 20px;
+}
+
+.pantry-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.add-new-btn {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    font-size: 1rem;
+}
+
+/* --- Control Bar --- */
+.pantry-controls {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px var(--color-shadow);
+    align-items: center;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+}
+
+.control-select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin-left: 10px;
+    font-size: 1rem;
+    min-width: 150px;
+}
+
+.search-box-pantry {
+    position: relative;
+    flex-grow: 1; 
+    display: flex;
+    align-items: center;
+}
+
+.pantry-search-input {
+    width: 100%;
+    padding: 10px 10px 10px 40px; 
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+.search-box-pantry .search-icon {
+    position: absolute;
+    left: 10px;
+    color: var(--color-text-muted);
+}
+
+/* --- Inventory Table --- */
+.inventory-table-section {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px var(--color-shadow);
+    overflow: hidden;
+    margin-bottom: 50px;
+}
+
+.pantry-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.pantry-table th, .pantry-table td {
+    padding: 15px;
+    text-align: left;
+}
+
+.pantry-table thead th {
+    background-color: var(--color-text-dark); 
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.pantry-table tbody tr {
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.15s;
+}
+
+.pantry-table tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+/* Status Highlighting */
+.status-danger { 
+    background-color: #fdd;
+}
+.status-warning { 
+    background-color: #fff8e1; 
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.icon-btn {
+    background: none;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+}
+
+.icon-btn:hover {
+    background-color: #eee;
+}
+
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+
+/* --- Responsive Table (Mobile First) --- */
+@media (max-width: 700px) {
+    .pantry-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    .pantry-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .filter-group {
+        justify-content: space-between;
+    }
+    .control-select {
+        flex-grow: 1;
+        margin-left: 0;
+    }
+    .pantry-table thead {
+        display: none; 
+    }
+    .pantry-table, .pantry-table tbody, .pantry-table tr, .pantry-table td {
+        display: block;
+        width: 100%;
+    }
+    .pantry-table tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 10px;
+    }
+    .pantry-table td {
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+    }
+    .pantry-table td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 10px;
+        font-weight: 700;
+        text-align: left;
+    }
+    .hide-on-mobile {
+        display: none !important;
+    }
+    .action-buttons {
+        justify-content: flex-end;
+    }
+}

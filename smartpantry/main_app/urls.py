@@ -14,5 +14,19 @@ urlpatterns = [
    path('register/', views.register, name='register'),
 
    # Dashboard
-    path('dashboard/', views.dashboard, name='dashboard'), 
+   path('dashboard/', views.dashboard, name='dashboard'), 
+
+   # item CRUD
+     # R (Read - List)
+   path('pantry/', views.pantry_view, name='my_pantry'), 
+    
+    # C (Create)
+   path('pantry/add/', views.item_create, name='item_create'), 
+    
+    # U (Update)
+   path('pantry/edit/<int:pk>/', views.item_update, name='item_update'),
+    
+    # D (Delete)
+   path('pantry/delete/confirm/<int:pk>/', views.item_delete_confirm, name='item_delete_confirm'),
+   path('pantry/delete/<int:pk>/', views.item_delete, name='item_delete'), 
 ]
