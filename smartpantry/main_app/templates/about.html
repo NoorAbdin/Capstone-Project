@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}About Us - Smart Pantry{% endblock %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/about.css' %}">
+{% endblock %}
+{% block content %}
+
+    <section class="about-hero-section">
+        <div class="about-hero-text">
+            <h1>Our Mission: Zero Waste, Zero Stress.</h1>
+            <p class="lead">We're here to transform your kitchen into a smart, efficient, and waste-free zone.</p>
+        </div>
+    </section>
+
+    <section class="about-content-section">
+        
+        <div class="about-card mission-card">
+            <h2 class="section-title">The Problem We Solve</h2>
+            <div class="card-body-flex">
+                <div class="card-text-block">
+                    <p>Every year, the average household throws away hundreds of dollars in spoiled food. The problem isn't just lack of money, it's lack of **visibility** and **planning**.</p>
+                    <p>We built Smart Pantry to eliminate the guesswork. We turn your chaotic kitchen inventory into an organized, digital asset that tells you exactly what to buy, what to cook, and what to use up first.</p>
+                </div>
+                <div class="card-icon-large">🗑️</div>
+            </div>
+        </div>
+
+        <div class="about-card values-card">
+            <h2 class="section-title">Our Core Values</h2>
+            <div class="values-grid">
+                
+                <div class="value-item">
+                    <span class="value-icon">🥕</span>
+                    <h3>Sustainability</h3>
+                    <p>Committed to reducing food waste and supporting eco-friendly kitchen habits.</p>
+                </div>
+                
+                <div class="value-item">
+                    <span class="value-icon">💡</span>
+                    <h3>Simplicity</h3>
+                    <p>Providing powerful tools that are intuitive and easy for anyone to use—no complex setup required.</p>
+                </div>
+                
+                <div class="value-item">
+                    <span class="value-icon">👨‍🍳</span>
+                    <h3>Practicality</h3>
+                    <p>Focusing on actionable insights, like instant recipes based on current ingredients, not just data.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="about-card cta-card">
+            <h2 class="section-title">Ready to Join the Revolution?</h2>
+            <p>Start managing your inventory smarter, cooking more efficiently, and saving money today.</p>
+            <a href="{% url 'register' %}" class="btn btn-primary btn-xl">Get Started Now</a>
+        </div>
+
+    </section>
+
+{% endblock content %}

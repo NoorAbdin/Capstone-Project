@@ -6,10 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 
 # Create your views here.
-#home ,about and dashboard
-def home(request):
-    return render(request, 'home.html')
-
+# dashboard
 User = get_user_model()
 
 @login_required
@@ -20,7 +17,7 @@ def dashboard(request):
     }
     return render(request, 'user_dashboard.html', context)
 
-
+# register
 def register(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)

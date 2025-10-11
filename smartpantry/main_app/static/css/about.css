@@ -1,0 +1,110 @@
+
+.about-hero-section {
+    text-align: center;
+    padding: 60px 0 40px;
+    margin-top: 20px;
+}
+
+.about-hero-text h1 {
+    font-size: 3rem;
+    color: var(--color-primary-green);
+    line-height: 1.1;
+}
+
+.about-content-section {
+    padding-bottom: 80px;
+}
+
+.about-card {
+    background-color: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px var(--color-shadow);
+    margin-bottom: 40px;
+}
+
+.mission-card .section-title {
+    text-align: left;
+    margin-bottom: 25px;
+}
+
+.card-body-flex {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+}
+
+.card-text-block {
+    flex: 2;
+}
+
+.card-text-block p {
+    margin-bottom: 15px;
+    font-size: 1.05rem;
+    color: var(--color-text-dark);
+}
+
+.card-icon-large {
+    flex: 1;
+    font-size: 5rem;
+    text-align: center;
+}
+
+/* Values Grid */
+.values-card .section-title {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.values-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    text-align: center;
+}
+
+.value-item h3 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 10px 0;
+    color: var(--color-primary-orange);
+}
+
+.value-icon {
+    font-size: 3rem;
+    display: block;
+}
+
+/* CTA Card */
+.cta-card {
+    text-align: center;
+    padding: 50px 40px;
+    background-color: #e0f2e0; 
+    border: 1px solid var(--color-primary-green);
+}
+
+.cta-card p {
+    margin-bottom: 30px;
+    font-size: 1.15rem;
+    color: var(--color-text-dark);
+}
+
+/* Responsive adjustments for about page */
+@media (max-width: 768px) {
+    .about-hero-text h1 {
+        font-size: 2.2rem;
+    }
+    
+    .card-body-flex {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .card-icon-large {
+        order: -1;
+    }
+    
+    .values-grid {
+        grid-template-columns: 1fr;
+    }
+}
