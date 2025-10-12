@@ -15,7 +15,6 @@
 
     <div class="recipe-suggestion-grid">
         
-        <!-- Ingredients Selection Form -->
         <div class="card ingredient-selection-card">
             <h3>1. Select Ingredients</h3>
             <form method="post" action="{% url 'recipe_suggest' %}" class="ingredient-form">
@@ -25,16 +24,11 @@
                     {% if user_items %}
                         {% for item in user_items %}
                             <label class="ingredient-checkbox">
-                                <!-- Checkbox is checked if its ID is in the selected_item_ids list -->
                                 <input type="checkbox" name="ingredients" value="{{ item.id }}" 
                                     {% if item.id|stringformat:"i" in selected_item_ids|stringformat:"i" %}checked{% endif %}>
                                 
                                 {{ item.name }} ({{ item.quantity }}) 
-                                
-                                <!-- Display 'Expiring Soon' flag if the date is within 7 days -->
-                                {% comment %} 
-                                    The logic here uses 'today' passed from the view to determine the expiring status 
-                                {% endcomment %}
+                            
                                 {% if item.expiration_date and item.expiration_date|date:"Y-m-d" < today|date:"Y-m-d"|add:"7 days" and item.expiration_date|date:"Y-m-d" >= today|date:"Y-m-d" %}
                                     <span class="badge badge-expiring">Expiring Soon!</span>
                                 {% endif %}
@@ -51,14 +45,12 @@
             </form>
         </div>
 
-        <!-- Recipe Display Area -->
         <div class="recipe-display-card">
             {% if error_message %}
                 <div class="alert alert-danger">{{ error_message }}</div>
             {% elif suggested_recipes %}
                 <div class="alert alert-success">Successfully generated {{ suggested_recipes|length }} recipe options!</div>
                 
-                <!-- Loop through the list of generated recipes -->
                 {% for recipe_data in suggested_recipes %}
                     <div class="card recipe-option mb-4">
                         <h2 class="recipe-title">Option {{ forloop.counter }}: {{ recipe_data.recipe.title }}</h2>
@@ -66,7 +58,6 @@
                         
                         <hr>
 
-                        <!-- Ingredients - NOW USING THE FULL LIST -->
                         <h3>Ingredients Required:</h3>
                         <ul class="recipe-ingredients-list">
                             {% for ingredient in recipe_data.full_ingredients_list %}
@@ -76,16 +67,22 @@
 
                         <hr>
 
-                        <!-- Steps -->
                         <h3>Instructions:</h3>
                         <ol class="recipe-steps">
-                            <!-- Split the single steps string into a list for easy display -->
                             {% for step in recipe_data.recipe.steps|split:"," %}
                                 {% if step|trim %}
                                     <li>{{ step|trim }}.</li>
                                 {% endif %}
                             {% endfor %}
                         </ol>
+
+                        <form method="post" action="{% url 'use_recipe_items' recipe_pk=recipe_data.recipe.pk %}" style="margin-top: 20px;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success btn-block consume-btn">
+                                ✅ Confirm: I'm Cooking This & Updating My Pantry
+                            </button>
+                        </form>
+
                     </div>
                 {% endfor %}
                 

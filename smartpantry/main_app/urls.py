@@ -32,4 +32,7 @@ urlpatterns = [
 
    # recipe suggestions
    path('recipes/suggest/', views.recipe_suggest, name='recipe_suggest'),
+ 
+   # used-items
+   path('recipe/use/<int:recipe_pk>/', views.use_recipe_items, name='use_recipe_items'), 
 ]

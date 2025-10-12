@@ -12,6 +12,7 @@ from django.db.models import Q
 import json
 from google import genai
 from google.genai import types
+from django.db import transaction
 
 # Create your views here.
 
@@ -224,6 +225,60 @@ def recipe_suggest(request):
     }
     return render(request, 'recipe/recipe_suggest.html', context)
 
+
+# --- NEW VIEW: Consumes items and updates pantry ---
+@login_required
+@transaction.atomic # Ensures all updates are successful or none are applied
+def use_recipe_items(request, recipe_pk):
+    """
+    Handles item consumption after a recipe is chosen.
+    Decrements the quantity of linked Item objects.
+    """
+    if request.method == 'POST':
+        recipe = get_object_or_404(Recipe, pk=recipe_pk)
+        
+        # 1. Get all items required by this specific recipe (linked via RecipeItem)
+        required_items = RecipeItem.objects.filter(recipe=recipe)
+        
+        # 2. Iterate through and update the user's actual Item objects
+        items_consumed_count = 0
+        
+        for required_item in required_items:
+            # The item object is the user's pantry item linked in RecipeItem
+            pantry_item = required_item.item
+            amount_used = required_item.amount_required
+            
+            # Check ownership and availability before updating
+            if pantry_item.user == request.user and pantry_item.status == 'available':
+                
+                # Check if we have enough quantity
+                if pantry_item.quantity >= amount_used:
+                    
+                    # Decrement quantity
+                    pantry_item.quantity -= amount_used
+                    
+                    # Check if quantity dropped to zero
+                    if pantry_item.quantity == 0:
+                        pantry_item.status = 'used'
+                        messages.info(request, f"'{pantry_item.name}' completely used up!")
+                    
+                    pantry_item.save()
+                    items_consumed_count += 1
+                else:
+                    # Log an error or warning if item was selected but quantity is now insufficient
+                    messages.warning(request, f"Could not fully consume {pantry_item.name}. Insufficient quantity.")
+
+
+        if items_consumed_count > 0:
+            messages.success(request, f"Pantry updated! Ingredients for '{recipe.title}' have been consumed.")
+        else:
+            messages.warning(request, "Pantry not updated. No available ingredients were linked to this recipe or quantities were insufficient.")
+            
+        # Redirect back to the recipe suggestion page or pantry view
+        return redirect('my_pantry') 
+    
+    # If accessed via GET, redirect to avoid direct access
+    return redirect('recipe_suggest')
 
 # my-pantry
 @login_required
