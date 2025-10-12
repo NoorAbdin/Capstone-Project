@@ -29,4 +29,7 @@ urlpatterns = [
     # D (Delete)
    path('pantry/delete/confirm/<int:pk>/', views.item_delete_confirm, name='item_delete_confirm'),
    path('pantry/delete/<int:pk>/', views.item_delete, name='item_delete'), 
+
+   # recipe suggestions
+   path('recipes/suggest/', views.recipe_suggest, name='recipe_suggest'),
 ]

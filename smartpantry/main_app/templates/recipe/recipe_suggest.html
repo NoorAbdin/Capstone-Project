@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load static %}
+{% load custom_filters %} 
+
+{% block title %}AI Recipe Generator{% endblock %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/recipes/recipe_suggest.css' %}">
+{% endblock %}
+{% block content %}
+<div class="page-container">
+    <div class="page-header">
+        <h1>🍳 AI Chef Recommender</h1>
+        <p class="subtitle">Select your ingredients below. The AI will prioritize items expiring in the next 7 days.</p>
+    </div>
+
+    <div class="recipe-suggestion-grid">
+        
+        <!-- Ingredients Selection Form -->
+        <div class="card ingredient-selection-card">
+            <h3>1. Select Ingredients</h3>
+            <form method="post" action="{% url 'recipe_suggest' %}" class="ingredient-form">
+                {% csrf_token %}
+                
+                <div class="ingredient-list-scroll">
+                    {% if user_items %}
+                        {% for item in user_items %}
+                            <label class="ingredient-checkbox">
+                                <!-- Checkbox is checked if its ID is in the selected_item_ids list -->
+                                <input type="checkbox" name="ingredients" value="{{ item.id }}" 
+                                    {% if item.id|stringformat:"i" in selected_item_ids|stringformat:"i" %}checked{% endif %}>
+                                
+                                {{ item.name }} ({{ item.quantity }}) 
+                                
+                                <!-- Display 'Expiring Soon' flag if the date is within 7 days -->
+                                {% comment %} 
+                                    The logic here uses 'today' passed from the view to determine the expiring status 
+                                {% endcomment %}
+                                {% if item.expiration_date and item.expiration_date|date:"Y-m-d" < today|date:"Y-m-d"|add:"7 days" and item.expiration_date|date:"Y-m-d" >= today|date:"Y-m-d" %}
+                                    <span class="badge badge-expiring">Expiring Soon!</span>
+                                {% endif %}
+                            </label>
+                        {% endfor %}
+                    {% else %}
+                        <p class="alert alert-info">Your pantry is empty! Add some items first.</p>
+                    {% endif %}
+                </div>
+
+                {% if user_items %}
+                    <button type="submit" class="btn btn-primary btn-block">Generate 3 Recipe Ideas</button>
+                {% endif %}
+            </form>
+        </div>
+
+        <!-- Recipe Display Area -->
+        <div class="recipe-display-card">
+            {% if error_message %}
+                <div class="alert alert-danger">{{ error_message }}</div>
+            {% elif suggested_recipes %}
+                <div class="alert alert-success">Successfully generated {{ suggested_recipes|length }} recipe options!</div>
+                
+                <!-- Loop through the list of generated recipes -->
+                {% for recipe_data in suggested_recipes %}
+                    <div class="card recipe-option mb-4">
+                        <h2 class="recipe-title">Option {{ forloop.counter }}: {{ recipe_data.recipe.title }}</h2>
+                        <p class="recipe-description">{{ recipe_data.recipe.description }}</p>
+                        
+                        <hr>
+
+                        <!-- Ingredients - NOW USING THE FULL LIST -->
+                        <h3>Ingredients Required:</h3>
+                        <ul class="recipe-ingredients-list">
+                            {% for ingredient in recipe_data.full_ingredients_list %}
+                                <li>{{ ingredient }}</li>
+                            {% endfor %}
+                        </ul>
+
+                        <hr>
+
+                        <!-- Steps -->
+                        <h3>Instructions:</h3>
+                        <ol class="recipe-steps">
+                            <!-- Split the single steps string into a list for easy display -->
+                            {% for step in recipe_data.recipe.steps|split:"," %}
+                                {% if step|trim %}
+                                    <li>{{ step|trim }}.</li>
+                                {% endif %}
+                            {% endfor %}
+                        </ol>
+                    </div>
+                {% endfor %}
+                
+            {% else %}
+                <div class="placeholder-content card p-6 text-center">
+                    <span style="font-size: 3rem;">🤖</span>
+                    <p>Your AI chef is ready! Select your ingredients and click 'Generate' to see your recipe options.</p>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+
+{% endblock content %}

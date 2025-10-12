@@ -1,0 +1,147 @@
+/* * Styles for the AI Recipe Generator (recipe_suggest.html)
+ * Designed for a two-column layout that collapses to a single column on mobile.
+ */
+
+ .page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.subtitle {
+    color: #6c757d;
+}
+
+/* --- Layout Grid --- */
+.recipe-suggestion-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr; /* Fixed width for form, fluid for recipes */
+    gap: 30px;
+    align-items: start;
+}
+
+/* --- General Card Styling --- */
+.card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* --- Ingredient Selection Form --- */
+.ingredient-selection-card {
+    position: sticky; /* Keeps the form visible while the user scrolls through recipes */
+    top: 20px; 
+}
+
+.ingredient-list-scroll {
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.ingredient-checkbox {
+    display: block;
+    padding: 8px 0;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: #343a40;
+    transition: background-color 0.1s;
+}
+
+.ingredient-checkbox:hover {
+    background-color: #f8f9fa;
+}
+
+.ingredient-checkbox input {
+    margin-right: 10px;
+}
+
+.btn-block {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s, box-shadow 0.2s;
+    font-weight: bold;
+}
+
+.btn-block:hover {
+    background-color: #0056b3;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+}
+
+/* --- Recipe Display --- */
+.recipe-option {
+    border-left: 5px solid #007bff; /* Highlight the recipe options */
+    margin-bottom: 20px;
+}
+
+.recipe-title {
+    font-size: 1.5rem;
+    color: #007bff;
+    margin-top: 0;
+}
+
+.recipe-description {
+    color: #495057;
+}
+
+.recipe-ingredients-list {
+    list-style: disc;
+    padding-left: 20px;
+}
+
+.recipe-steps {
+    padding-left: 20px;
+}
+
+.recipe-steps li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+    color: #343a40;
+}
+
+.badge-expiring {
+    display: inline-block;
+    background-color: #ffc107;
+    color: #343a40;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    margin-left: 5px;
+    animation: pulse-yellow 2s infinite;
+}
+
+/* Animation for the expiring badge */
+@keyframes pulse-yellow {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.placeholder-content {
+    color: #6c757d;
+}
+
+/* --- Mobile Responsiveness --- */
+@media (max-width: 900px) {
+    .recipe-suggestion-grid {
+        grid-template-columns: 1fr; /* Stacks columns vertically */
+    }
+    .ingredient-selection-card {
+        position: static; /* Remove sticky on mobile */
+    }
+}
