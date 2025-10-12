@@ -30,8 +30,10 @@ urlpatterns = [
    path('pantry/delete/confirm/<int:pk>/', views.item_delete_confirm, name='item_delete_confirm'),
    path('pantry/delete/<int:pk>/', views.item_delete, name='item_delete'), 
 
-   # recipe suggestions
+   # Recipes 
    path('recipes/suggest/', views.recipe_suggest, name='recipe_suggest'),
+   path('recipes/<int:recipe_pk>/', views.recipe_detail, name='recipe_detail'),
+   path('recipe/', views.recipe_saved, name='recipes'),
  
    # used-items
    path('recipe/use/<int:recipe_pk>/', views.use_recipe_items, name='use_recipe_items'), 

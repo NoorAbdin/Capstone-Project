@@ -1,0 +1,212 @@
+.detail-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 30px 20px;
+    font-family: 'Inter', sans-serif;
+    background-color: #ffffff; 
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* --- Header Section --- */
+.detail-header {
+    text-align: center;
+    padding-bottom: 25px;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #e5e5e5;
+}
+
+.detail-header .back-link {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.detail-header .back-link a {
+    color: #444; 
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.detail-header .back-link a:hover {
+    color: #cc5500; 
+}
+
+.detail-header h1 {
+    font-size: 2.5rem;
+    color: var(--color-text-dark);
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.detail-header .subtitle {
+    font-size: 1.1rem;
+    color: #777777;
+    line-height: 1.5;
+    font-style: italic;
+}
+
+/* --- Description Section --- */
+.detail-description {
+    padding: 20px;
+    margin-bottom: 30px;
+    border-left: 3px solid #ccc; 
+}
+.detail-description p {
+    color: #444444;
+}
+
+/* --- Main Content Layout (Flex on Desktop) --- */
+.recipe-content {
+    display: flex;
+    gap: 30px;
+}
+
+/* Ingredients sidebar */
+.ingredients-sidebar {
+    flex-basis: 35%; 
+    padding: 20px;
+    background-color: #f7f7f7;
+    border-radius: 8px;
+    border: 1px solid #eeeeee; 
+    height: fit-content; 
+}
+
+/* Instructions main area */
+.instructions-main {
+    flex-basis: 65%; 
+}
+
+/* --- Section Headings --- */
+.recipe-section h2, .recipe-section .section-title {
+    font-size: 1.8rem;
+    color: var(--color-text-dark); 
+    font-weight: 700;
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #cc5500; 
+}
+
+/* Pantry Usage Sub-heading */
+.pantry-usage .section-title {
+    font-size: 1.5rem;
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 10px;
+    color: #444444;
+}
+
+
+/* --- Ingredients List Styling --- */
+.ingredient-list {
+    list-style: none;
+    padding: 0;
+}
+
+.ingredient-list li {
+    padding: 8px 0;
+    border-bottom: 1px dashed #e5e5e5;
+    font-size: 1rem;
+    color: #555555;
+}
+
+.ingredient-list li:last-child {
+    border-bottom: none;
+}
+
+/* --- Pantry Usage List --- */
+.pantry-usage-list {
+    list-style: none;
+    padding: 0;
+}
+
+.pantry-usage-list li {
+    margin-bottom: 5px;
+    color: #444444;
+}
+
+.pantry-usage-list .item-amount {
+    color: #cc5500; 
+    font-weight: 700;
+}
+
+/* --- Instructions Steps Styling --- */
+.instruction-steps {
+    list-style-type: none;
+    counter-reset: step-counter;
+    padding: 0;
+}
+
+.instruction-steps li {
+    counter-increment: step-counter;
+    padding: 15px 0 15px 50px;
+    position: relative;
+    border-bottom: 1px solid #f0f0f0;
+    line-height: 1.6;
+    color: #333333;
+}
+
+/* Step Number Bubble */
+.instruction-steps li::before {
+    content: counter(step-counter);
+    position: absolute;
+    left: 0;
+    top: 15px;
+    width: 30px;
+    height: 30px;
+    background-color: #cc5500; 
+    color: white; 
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+/* --- Action Button --- */
+.action-area {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #e5e5e5;
+}
+
+.action-area .btn-primary {
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    background-color: #cc5500; 
+    color: white; 
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    box-shadow: 0 4px 10px rgba(204, 85, 0, 0.4);
+}
+
+.action-area .btn-primary:hover {
+    background-color: #a34400;
+    box-shadow: 0 6px 15px rgba(204, 85, 0, 0.6);
+}
+
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+    .detail-container {
+        margin: 20px 10px;
+        padding: 20px 15px;
+    }
+    .recipe-content {
+        flex-direction: column; 
+    }
+    .ingredients-sidebar {
+        flex-basis: auto;
+    }
+    .instructions-main {
+        flex-basis: auto;
+    }
+    .detail-header h1 {
+        font-size: 2rem;
+    }
+}

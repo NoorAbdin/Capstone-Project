@@ -35,6 +35,12 @@ class Recipe(models.Model):
     description = models.TextField()
     steps = models.TextField()
 
+    full_ingredients_json = models.TextField(
+        default='[]',
+        help_text="Stores the full list of ingredients as a JSON string for display.",
+        null=True
+    )
+
     def __str__(self):
      return self.title
     

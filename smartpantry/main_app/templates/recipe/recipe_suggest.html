@@ -28,7 +28,6 @@
                                     {% if item.id|stringformat:"i" in selected_item_ids|stringformat:"i" %}checked{% endif %}>
                                 
                                 {{ item.name }} ({{ item.quantity }}) 
-                            
                                 {% if item.expiration_date and item.expiration_date|date:"Y-m-d" < today|date:"Y-m-d"|add:"7 days" and item.expiration_date|date:"Y-m-d" >= today|date:"Y-m-d" %}
                                     <span class="badge badge-expiring">Expiring Soon!</span>
                                 {% endif %}

@@ -7,7 +7,7 @@
 
 .about-hero-text h1 {
     font-size: 3rem;
-    color: var(--color-primary-green);
+    color: var(--color-text-dark);
     line-height: 1.1;
 }
 

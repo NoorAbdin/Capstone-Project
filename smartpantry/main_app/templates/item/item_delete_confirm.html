@@ -2,39 +2,41 @@
 {% load static %}
 
 {% block title %}Confirm Deletion - {{ item.name }}{% endblock %}
-
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/items/item_deletion.css' %}">
+{% endblock %}
 {% block content %}
 
     <div class="form-page-wrapper">
         <div class="auth-card item-form-card">
             
-            <div style="text-align: center; margin-bottom: 20px;">
-                <span style="font-size: 4rem; color: #E74C3C;">⚠️</span>
+            <div class="delete-icon-wrapper">
+                <span class="delete-icon">⚠️</span>
             </div>
             
-            <h1 class="auth-title" style="color: #E74C3C;">Confirm Deletion</h1>
+            <h1 class="auth-title delete-title">Confirm Deletion</h1>
             
-            <p class="auth-subtitle" style="text-align: center; font-size: 1.1rem; color: #444;">
+            <p class="auth-subtitle delete-subtitle">
                 You are about to permanently delete the item:
             </p>
 
-            <h2 style="text-align: center; margin: 15px 0 30px; font-size: 1.8rem; color: #2C3E50;">
+            <h2 class="item-name-to-delete">
                 "{{ item.name }}"
             </h2>
 
-            <form method="post" action="{% url 'item_delete' pk=item.pk %}" class="auth-form">
+            <form method="post" action="{% url 'item_delete' pk=item.pk %}" class="auth-form delete-form">
                 {% csrf_token %}
                 
-                <p style="text-align: center; margin-bottom: 30px; color: #888;">
+                <p class="delete-warning-text">
                     This action cannot be undone. Are you sure you want to proceed?
                 </p>
 
-                <div class="form-group" style="display: flex; justify-content: space-around; gap: 20px;">
-                    <a href="{% url 'my_pantry' %}" class="btn btn-secondary btn-xl" style="width: 100%;">
+                <div class="form-group action-buttons-group">
+                    <a href="{% url 'my_pantry' %}" class="btn btn-secondary btn-xl action-button-cancel">
                         Cancel
                     </a>
                     
-                    <button type="submit" class="btn btn-danger btn-xl" style="width: 100%;">
+                    <button type="submit" class="btn btn-danger btn-xl action-button-confirm">
                         Yes, Delete It
                     </button>
                 </div>

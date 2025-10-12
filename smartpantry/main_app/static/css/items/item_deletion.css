@@ -1,0 +1,118 @@
+.form-page-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh; /* Center vertically on the screen */
+    padding: 20px;
+    background-color: #f7f7f7; /* Light background for contrast */
+}
+
+.auth-card {
+    background: #ffffff;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 450px; /* Standard form width */
+    font-family: 'Inter', sans-serif;
+}
+
+/* --- Deletion Specific Styles --- */
+
+.delete-icon-wrapper {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.delete-icon {
+    font-size: 4rem;
+    color: #d9534f; /* Warning Red */
+    display: inline-block;
+}
+
+.delete-title {
+    color: #2c3e50; /* Dark Charcoal for titles */
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.delete-subtitle {
+    text-align: center;
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.item-name-to-delete {
+    text-align: center;
+    margin: 15px 0 30px;
+    font-size: 2rem;
+    color: #cc5500; /* Use a strong accent color for the item name, e.g., Bronze-Orange */
+    font-weight: 600;
+}
+
+.delete-warning-text {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #888;
+    font-style: italic;
+    font-size: 0.95rem;
+}
+
+/* --- Action Buttons --- */
+
+.action-buttons-group {
+    display: flex;
+    justify-content: space-around;
+    gap: 15px;
+}
+
+/* Base Button Styling (You should probably define these globally) */
+.btn {
+    text-decoration: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+    border: 1px solid transparent;
+}
+
+/* Delete Button (Danger) */
+.btn-danger {
+    background-color: #d9534f; /* Primary Deletion Red */
+    color: white;
+    box-shadow: 0 4px 8px rgba(217, 83, 79, 0.3);
+}
+
+.btn-danger:hover {
+    background-color: #c9302c;
+    box-shadow: 0 6px 10px rgba(217, 83, 79, 0.4);
+}
+
+/* Cancel Button (Neutral/Secondary) */
+.btn-secondary {
+    background-color: #f0f0f0; /* Light Gray */
+    color: #444;
+    border-color: #d9d9d9;
+}
+
+.btn-secondary:hover {
+    background-color: #e0e0e0;
+    color: #222;
+}
+
+/* Responsive adjustment for small screens */
+@media (max-width: 500px) {
+    .auth-card {
+        padding: 20px 25px;
+    }
+    .action-buttons-group {
+        flex-direction: column;
+    }
+}

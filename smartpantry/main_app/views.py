@@ -174,11 +174,10 @@ def recipe_suggest(request):
                     new_recipe = Recipe.objects.create(
                         title=recipe_data['title'],
                         description=recipe_data['description'],
-                        steps=recipe_data['steps']
+                        steps=recipe_data['steps'],
+                        # FIX: Save the full ingredient list as a JSON string to the new field
+                        full_ingredients_json=json.dumps(recipe_data.get('full_ingredient_list', [])) 
                     )
-
-                    # List to store display text for the recipe's ingredients (The old method, now replaced by full_ingredient_list)
-                    recipe_ingredients_display = [] 
 
                     # Save to RecipeItem Model (Link to user's actual Item objects)
                     required_ingredients = recipe_data.get('required_ingredients', [])
@@ -190,7 +189,7 @@ def recipe_suggest(request):
                         
                         # Find the actual Item object the user has (case-insensitive match among selected items)
                         try:
-                            # Use selected_items, not all_available_items
+                            # We use selected_items (which are the items the user checked in the form)
                             pantry_item = selected_items.get(name__iexact=item_name)
                             
                             RecipeItem.objects.create(
@@ -198,17 +197,15 @@ def recipe_suggest(request):
                                 item=pantry_item,
                                 amount_required=amount
                             )
-                            # Keep this for backward compatibility or debugging, but we use full_ingredient_list now
-                            recipe_ingredients_display.append(f"{amount} {unit} of {pantry_item.name}") 
                             
                         except Item.DoesNotExist:
+                            # This item was in the recipe but wasn't found in the selected pantry items. Skip linking.
                             pass 
 
                     # Append the new recipe object and its generated ingredient list
                     suggested_recipes.append({
                         'recipe': new_recipe,
-                        'full_ingredients_list': recipe_data.get('full_ingredient_list', []), # PASS THE FULL LIST
-                        'ingredients_display': recipe_ingredients_display
+                        'full_ingredients_list': recipe_data.get('full_ingredient_list', []), 
                     })
                 
             except Exception as e:
@@ -230,10 +227,6 @@ def recipe_suggest(request):
 @login_required
 @transaction.atomic # Ensures all updates are successful or none are applied
 def use_recipe_items(request, recipe_pk):
-    """
-    Handles item consumption after a recipe is chosen.
-    Decrements the quantity of linked Item objects.
-    """
     if request.method == 'POST':
         recipe = get_object_or_404(Recipe, pk=recipe_pk)
         
@@ -279,6 +272,56 @@ def use_recipe_items(request, recipe_pk):
     
     # If accessed via GET, redirect to avoid direct access
     return redirect('recipe_suggest')
+
+# Recipe view
+@login_required
+def recipe_saved(request):
+ 
+    # This query finds all unique Recipe IDs that are linked to the current user's items.
+    user_recipe_ids = RecipeItem.objects.filter(item__user=request.user).values_list('recipe_id', flat=True).distinct()
+    
+    # Fetch the actual Recipe objects
+    all_recipes = Recipe.objects.filter(id__in=user_recipe_ids).order_by('-id') # Show newest first
+
+    context = {
+        'title': 'My Saved Recipes',
+        'recipes': all_recipes
+    }
+    return render(request, 'recipe/recipes.html', context)
+
+# --- NEW VIEW: Recipe Detail ---
+@login_required
+def recipe_detail(request, recipe_pk):
+    """
+    Displays the full details of a saved recipe.
+    """
+    # 1. Fetch the recipe object
+    recipe = get_object_or_404(Recipe, pk=recipe_pk)
+    
+    # 2. Check if this recipe is linked to the user's pantry items to ensure authorization
+    if not RecipeItem.objects.filter(recipe=recipe, item__user=request.user).exists():
+        messages.error(request, "Recipe not found or you are not authorized to view it.")
+        return redirect('recipe_index')
+
+    # 3. Load the full ingredient list (which was saved as a JSON string)
+    try:
+        # FIX: The field is now guaranteed to exist and contain a JSON string (default '[]')
+        full_ingredients = json.loads(recipe.full_ingredients_json)
+    except (json.JSONDecodeError, TypeError):
+        full_ingredients = ["Error loading ingredients."]
+
+    # 4. Get the required pantry items for the recipe for a status check
+    required_pantry_items = RecipeItem.objects.filter(recipe=recipe)
+
+    context = {
+        'title': recipe.title,
+        'recipe': recipe,
+        'full_ingredients': full_ingredients,
+        'required_pantry_items': required_pantry_items,
+    }
+    return render(request, 'recipe/detail.html', context)
+
+
 
 # my-pantry
 @login_required
@@ -374,6 +417,7 @@ def item_update(request, pk):
 
 
 # --- D (Delete) ---
+
 @login_required
 def item_delete(request, pk):
     item = get_object_or_404(Item, pk=pk, user=request.user)
