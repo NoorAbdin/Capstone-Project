@@ -1,36 +1,59 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from .forms import CustomUserCreationForm
-from django.contrib.auth.views import LoginView as DjangoLoginView
-from django.contrib.auth import login, logout
-from django.contrib.auth.decorators import login_required 
-from django.contrib.auth import get_user_model
-from .models import Item, Recipe, RecipeItem 
-from .forms import ItemForm 
-from datetime import date , timedelta
-from django.contrib import messages 
-from django.db.models import Q
 import json
+import time 
+import random 
+from datetime import date, timedelta
+import os
+from dotenv import load_dotenv
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages 
+from django.db import transaction
+from django.contrib.auth import get_user_model, login, logout
 from google import genai
 from google.genai import types
-from django.db import transaction
 
-# Create your views here.
+# Load environment variables
+load_dotenv()
+api_key = os.getenv('_api_key_', '').strip()  # ضع هنا اسم مفتاحك الصحيح في .env
 
+# Models & Forms
+from .models import Item, Recipe, RecipeItem 
+from .forms import CustomUserCreationForm, ItemForm
 
-# Initialize the Gemini client (Assumes GEMINI_API_KEY is set in environment)
-try:
-    client = genai.Client()
-except Exception as e:
-    # Handle case where API key is not set or client fails to initialize
-    print(f"Gemini Client Initialization Error: {e}")
-    client = None
-
-# dashboard
 User = get_user_model()
 
+MAX_RETRIES = 5
+
+# --- HELPER FUNCTION: Exponential Backoff for API Calls ---
+def exponential_backoff_call(client, model, contents, config, max_retries=MAX_RETRIES):
+    for attempt in range(max_retries):
+        try:
+            response = client.models.generate_content(
+                model=model,
+                contents=contents,
+                config=config
+            )
+            return response
+        except genai.errors.ResourceExhaustedError as e:
+            if attempt < max_retries - 1:
+                time.sleep(2 ** attempt + random.uniform(0, 1))
+                continue
+            else:
+                raise e
+        except Exception as e:
+            if attempt < max_retries - 1:
+                time.sleep(2 ** attempt + random.uniform(0, 1))
+                continue
+            else:
+                raise e
+    raise Exception("Max retries exceeded for API call.")
+
+
+# ------------------- DASHBOARD -------------------
 @login_required
 def dashboard(request):
-  
+    
     today = date.today()
     seven_days_from_now = today + timedelta(days=7)
 
@@ -48,246 +71,122 @@ def dashboard(request):
     }
     return render(request, 'user_dashboard.html', context)
 
-# --- Recipe Suggestion View (NEW) ---
+
 @login_required
-def recipe_suggest(request):
-    today = date.today()
-    seven_days_from_now = today + timedelta(days=7)
-
-    # Split available items into two lists for prompting
-    all_available_items = Item.objects.filter(user=request.user, status='available').order_by('name')
-    
-    # Items expiring in the next 7 days (prioritized)
-    expiring_items = all_available_items.filter(
-        expiration_date__gte=today, 
-        expiration_date__lte=seven_days_from_now
-    ).order_by('expiration_date')
-    
-    # All other available items (not expiring soon)
-    other_items = all_available_items.exclude(
-        id__in=expiring_items.values_list('id', flat=True)
-    )
-
-    suggested_recipes = []
-    error_message = None
+@transaction.atomic
+def cook_and_save_recipe(request, recipe_pk):
+    """
+    Combines: consuming ingredients and saving recipe for user.
+    """
+    recipe = get_object_or_404(Recipe, pk=recipe_pk)
+    user = request.user
+    messages_list = []
 
     if request.method == 'POST':
-        # Get selected item IDs from the form
-        selected_item_ids = request.POST.getlist('ingredients')
-        
-        # Filter items based on user selection
-        selected_items = Item.objects.filter(id__in=selected_item_ids)
-        
-        # Prepare list of selected ingredients for the prompt, flagging expiring items
-        expiring_list = [f"{item.name} (EXPIRING SOON, use priority!)" for item in selected_items if item in expiring_items]
-        regular_list = [f"{item.name} (regular stock)" for item in selected_items if item not in expiring_items]
-        
-        ingredient_list = expiring_list + regular_list
-        ingredient_prompt_text = ", ".join(ingredient_list)
-
-
-        if not ingredient_prompt_text:
-            error_message = "Please select at least one ingredient to generate recipes."
-        elif not client:
-            error_message = "Recipe generator is unavailable (API error). Please check API key configuration."
-        else:
-            # --- STRUCTURED OUTPUT SCHEMA DEFINITION ---
-            RecipeIngredientSchema = types.Schema(
-                type=types.Type.OBJECT,
-                properties={
-                    "item_name": types.Schema(type=types.Type.STRING, description="The exact name of the ingredient used from the user's pantry."),
-                    "amount_required": types.Schema(type=types.Type.INTEGER, description="The integer quantity required for the recipe (e.g., 2, 50, 1)."),
-                    "unit": types.Schema(type=types.Type.STRING, description="The unit of measurement (e.g., cups, grams, units, oz).")
-                },
-                required=["item_name", "amount_required", "unit"]
-            )
-
-            SingleRecipeSchema = types.Schema(
-                type=types.Type.OBJECT,
-                properties={
-                    "title": types.Schema(type=types.Type.STRING, description="A creative and descriptive title for the recipe."),
-                    "description": types.Schema(type=types.Type.STRING, description="A brief summary of the dish and its flavor."),
-                    "steps": types.Schema(type=types.Type.STRING, description="The complete, step-by-step cooking instructions, formatted as a single, long, comma-separated string."),
-                    "required_ingredients": types.Schema(
-                        type=types.Type.ARRAY,
-                        items=RecipeIngredientSchema,
-                        description="A list of ingredients used from the user's selected items, linking to inventory."
-                    ),
-                    "full_ingredient_list": types.Schema( # NEW FIELD FOR DISPLAY
-                        type=types.Type.ARRAY,
-                        items=types.Schema(type=types.Type.STRING),
-                        description="A comprehensive list of ALL ingredients used in the recipe, including staples like '1/2 cup flour' or '1 tsp salt'."
-                    )
-                },
-                required=["title", "description", "steps", "required_ingredients", "full_ingredient_list"]
-            )
-            
-            # The final expected output is a list of recipes
-            RecipeListSchema = types.Schema(
-                type=types.Type.OBJECT,
-                properties={
-                    "recipes": types.Schema(
-                        type=types.Type.ARRAY,
-                        items=SingleRecipeSchema,
-                        description="A list of 3 distinct recipe objects."
-                    )
-                },
-                required=["recipes"]
-            )
-            # --- END SCHEMA DEFINITION ---
-
-            # System instruction to enforce high-quality, sensible output
-            system_instruction = (
-                "You are a professional, pragmatic, and creative chef. "
-                "Your task is to create 3 distinct, simple, delicious, and achievable recipes using the ingredients provided. "
-                "PRIORITIZE using ingredients flagged as 'EXPIRING SOON'. "
-                "You must assume the user has common kitchen staples available: Salt, Pepper, Olive Oil, Vegetable Oil, Butter, Flour, Sugar, Eggs, Garlic, and Onion. "
-                "Provide a comprehensive 'full_ingredient_list' containing ALL ingredients used (pantry items + staples) for display. "
-                "The 'required_ingredients' list must ONLY contain items explicitly selected from the pantry for inventory tracking."
-            )
-            
-            prompt = (
-                f"Using ONLY the following selected ingredients from a pantry: {ingredient_prompt_text}. "
-                "Generate 3 distinct, sensible recipes. "
-                "The steps must be formatted as a single, long, comma-separated string, where each step is separated by a comma."
-            )
-            
-            try:
-                # 2. Call the Gemini API with the schema and system instruction
-                response = client.models.generate_content(
-                    model='gemini-2.5-flash',
-                    contents=prompt,
-                    config=types.GenerateContentConfig(
-                        response_mime_type="application/json",
-                        response_schema=RecipeListSchema,
-                        system_instruction=system_instruction
-                    )
-                )
-
-                # 3. Parse and Save the Structured Response
-                recipe_list_data = json.loads(response.text)
-                
-                # Process each recipe in the returned list
-                for recipe_data in recipe_list_data.get('recipes', []):
-                    
-                    # Save to Recipe Model
-                    new_recipe = Recipe.objects.create(
-                        title=recipe_data['title'],
-                        description=recipe_data['description'],
-                        steps=recipe_data['steps'],
-                        # FIX: Save the full ingredient list as a JSON string to the new field
-                        full_ingredients_json=json.dumps(recipe_data.get('full_ingredient_list', [])) 
-                    )
-
-                    # Save to RecipeItem Model (Link to user's actual Item objects)
-                    required_ingredients = recipe_data.get('required_ingredients', [])
-                    
-                    for req_item in required_ingredients:
-                        item_name = req_item.get('item_name', '')
-                        amount = req_item.get('amount_required', 1) 
-                        unit = req_item.get('unit', 'units') 
-                        
-                        # Find the actual Item object the user has (case-insensitive match among selected items)
-                        try:
-                            # We use selected_items (which are the items the user checked in the form)
-                            pantry_item = selected_items.get(name__iexact=item_name)
-                            
-                            RecipeItem.objects.create(
-                                recipe=new_recipe,
-                                item=pantry_item,
-                                amount_required=amount
-                            )
-                            
-                        except Item.DoesNotExist:
-                            # This item was in the recipe but wasn't found in the selected pantry items. Skip linking.
-                            pass 
-
-                    # Append the new recipe object and its generated ingredient list
-                    suggested_recipes.append({
-                        'recipe': new_recipe,
-                        'full_ingredients_list': recipe_data.get('full_ingredient_list', []), 
-                    })
-                
-            except Exception as e:
-                error_message = f"An API or processing error occurred while generating recipes. Please check your inputs. Error: {e}"
-                
-    context = {
-        'title': 'AI Recipe Generator',
-        # Pass all available items (expiring prioritized) for display in the form
-        'user_items': expiring_items.union(other_items),
-        'suggested_recipes': suggested_recipes, # Now a list of dictionaries
-        'error_message': error_message,
-        'selected_item_ids': selected_item_ids if request.method == 'POST' else [],
-        'today': today, # Pass today for the expiration date logic in the template
-    }
-    return render(request, 'recipe/recipe_suggest.html', context)
-
-
-# --- NEW VIEW: Consumes items and updates pantry ---
-@login_required
-@transaction.atomic # Ensures all updates are successful or none are applied
-def use_recipe_items(request, recipe_pk):
-    if request.method == 'POST':
-        recipe = get_object_or_404(Recipe, pk=recipe_pk)
-        
-        # 1. Get all items required by this specific recipe (linked via RecipeItem)
+        # --- 1. Consume pantry items ---
         required_items = RecipeItem.objects.filter(recipe=recipe)
-        
-        # 2. Iterate through and update the user's actual Item objects
         items_consumed_count = 0
-        
-        for required_item in required_items:
-            # The item object is the user's pantry item linked in RecipeItem
-            pantry_item = required_item.item
-            amount_used = required_item.amount_required
-            
-            # Check ownership and availability before updating
-            if pantry_item.user == request.user and pantry_item.status == 'available':
-                
-                # Check if we have enough quantity
+
+        for req_item in required_items:
+            pantry_item = req_item.item
+            amount_used = req_item.amount_required
+
+            if pantry_item.user == user and pantry_item.status == 'available':
                 if pantry_item.quantity >= amount_used:
-                    
-                    # Decrement quantity
                     pantry_item.quantity -= amount_used
-                    
-                    # Check if quantity dropped to zero
                     if pantry_item.quantity == 0:
                         pantry_item.status = 'used'
-                        messages.info(request, f"'{pantry_item.name}' completely used up!")
-                    
+                        messages_list.append(f"'{pantry_item.name}' completely used up!")
                     pantry_item.save()
                     items_consumed_count += 1
                 else:
-                    # Log an error or warning if item was selected but quantity is now insufficient
-                    messages.warning(request, f"Could not fully consume {pantry_item.name}. Insufficient quantity.")
-
+                    messages_list.append(f"Could not fully consume {pantry_item.name}. Insufficient quantity.")
 
         if items_consumed_count > 0:
             messages.success(request, f"Pantry updated! Ingredients for '{recipe.title}' have been consumed.")
         else:
-            messages.warning(request, "Pantry not updated. No available ingredients were linked to this recipe or quantities were insufficient.")
-            
-        # Redirect back to the recipe suggestion page or pantry view
-        return redirect('my_pantry') 
-    
-    # If accessed via GET, redirect to avoid direct access
+            messages.warning(request, "Pantry not updated. No available ingredients or insufficient quantities.")
+
+        # --- 2. Save recipe for the user ---
+        # Link recipe to all user's selected items (or at least one to mark it as saved)
+        for item in Item.objects.filter(user=user):
+            RecipeItem.objects.get_or_create(recipe=recipe, item=item, defaults={'amount_required': 0})
+
+        messages.success(request, f"'{recipe.title}' has been saved to your recipes.")
+
+        # Redirect to recipes page
+        return redirect('recipes')
+
     return redirect('recipe_suggest')
+
 
 # Recipe view
 @login_required
 def recipe_saved(request):
- 
-    # This query finds all unique Recipe IDs that are linked to the current user's items.
-    user_recipe_ids = RecipeItem.objects.filter(item__user=request.user).values_list('recipe_id', flat=True).distinct()
+    """
+    Lists recipes explicitly saved by the user, sorted by pantry match score,
+    and allows filtering by a specific ingredient.
+    """
+    user = request.user
     
-    # Fetch the actual Recipe objects
-    all_recipes = Recipe.objects.filter(id__in=user_recipe_ids).order_by('-id') # Show newest first
+    # 1. Get user's pantry item names for scoring (case-insensitive set)
+    user_pantry_items = Item.objects.filter(user=user).values_list('name', flat=True)
+    user_pantry_set = set(name.lower() for name in user_pantry_items)
+    
+    # 2. Base Query: Find all unique Recipe IDs linked to the current user's items.
+    user_recipe_ids = RecipeItem.objects.filter(item__user=user).values_list('recipe_id', flat=True).distinct()
+    
+    # 3. Fetch Recipes and required items
+    all_recipes = Recipe.objects.filter(id__in=user_recipe_ids).prefetch_related('recipeitem_set__item')
 
+    # --- Setup for Filtering and Scoring ---
+    ingredient_filter = request.GET.get('ingredient')
+    filtered_recipes = []
+    all_ingredients_in_saved_recipes = set()
+
+    for recipe in all_recipes:
+        recipe_items = recipe.recipeitem_set.all()
+        
+        # Calculate Required Ingredients and Matched Count
+        required_ingredients = set(r.item.name.lower() for r in recipe_items)
+        
+        # Add all ingredients from saved recipes to the filter list
+        for name in required_ingredients:
+            all_ingredients_in_saved_recipes.add(name.capitalize())
+
+        matched_count = len(required_ingredients.intersection(user_pantry_set))
+        total_required = len(required_ingredients)
+
+        # Attach scoring attributes
+        recipe.matched_count = matched_count
+        recipe.total_required = total_required
+        recipe.pantry_match_score = f"{matched_count}/{total_required}"
+
+        # Apply filtering for the current recipe
+        if ingredient_filter:
+            # Check if the requested ingredient is in the recipe's required list
+            if ingredient_filter.lower() in required_ingredients:
+                filtered_recipes.append(recipe)
+        else:
+            filtered_recipes.append(recipe)
+
+    # 4. Sorting: Sort the filtered list by the calculated score (highest match first)
+    sorted_recipes = sorted(
+        filtered_recipes,
+        key=lambda r: (r.matched_count, r.total_required, r.id), # Sort by match, then total, then ID
+        reverse=True
+    )
+    
     context = {
         'title': 'My Saved Recipes',
-        'recipes': all_recipes
+        'recipes': sorted_recipes,
+        # Pass the unique ingredient list for the filter dropdown
+        'pantry_ingredient_names': sorted(list(all_ingredients_in_saved_recipes)),
+        'current_filter': ingredient_filter or 'all',
     }
     return render(request, 'recipe/recipes.html', context)
+
+
 
 # --- NEW VIEW: Recipe Detail ---
 @login_required
@@ -301,7 +200,7 @@ def recipe_detail(request, recipe_pk):
     # 2. Check if this recipe is linked to the user's pantry items to ensure authorization
     if not RecipeItem.objects.filter(recipe=recipe, item__user=request.user).exists():
         messages.error(request, "Recipe not found or you are not authorized to view it.")
-        return redirect('recipe_index')
+        return redirect('recipes')
 
     # 3. Load the full ingredient list (which was saved as a JSON string)
     try:
@@ -326,12 +225,36 @@ def recipe_detail(request, recipe_pk):
 # my-pantry
 @login_required
 def pantry_view(request):
+    today = date.today()
+
+    items = Item.objects.filter(user=request.user, status='available')
+
+    category_filter = request.GET.get('category')
+    if category_filter and category_filter != 'all':
+        items = items.filter(category=category_filter)
+
+    search_query = request.GET.get('search')
+    if search_query:
+
+        items = items.filter(name__icontains=search_query)
+
+    sort_by = request.GET.get('sort_by', 'expiring')
+    
+    if sort_by == 'name':
+        items = items.order_by('name')
+    elif sort_by == 'added':
+        items = items.order_by('-date_added')
+    else: 
+        items = items.order_by('expiration_date')
 
     context = {
         'title': 'My Pantry Inventory',
+        'items': items,
+        'today': today,
+        'status_choices': Item.STATUS_CHOICES,
     }
-    
     return render(request, 'pantry.html', context)
+
 
 # register
 def register(request):
@@ -339,6 +262,7 @@ def register(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
+            # This line is correct and logs the user in after successful registration.
             login(request, user)
             return redirect('home')
     else:
@@ -423,11 +347,11 @@ def item_delete(request, pk):
     item = get_object_or_404(Item, pk=pk, user=request.user)
         
     if request.method == 'POST':
-            item_name = item.name 
-            item.delete()
-            # 🎯 Add the success message here
-            messages.success(request, f'"{item_name}" was successfully deleted from your pantry.')
-            return redirect('my_pantry')
+        item_name = item.name 
+        item.delete()
+        # 🎯 Add the success message here
+        messages.success(request, f'"{item_name}" was successfully deleted from your pantry.')
+        return redirect('my_pantry')
         
     return redirect('my_pantry')
 
@@ -444,3 +368,145 @@ def item_delete_confirm(request, pk):
     }
     return render(request, 'item/item_delete_confirm.html', context)
 
+
+# ------------------- RECIPE SUGGEST -------------------
+@login_required
+def recipe_suggest(request):
+   
+    load_dotenv()
+    api_key = os.getenv('_api_key_', '').strip()  # Make sure your .env has _api_key_
+
+    today = date.today()
+    seven_days_from_now = today + timedelta(days=7)
+
+    error_message = None
+    gemini_client = None
+
+    if not api_key:
+        error_message = "Recipe generator unavailable: API key missing."
+    else:
+        try:
+            gemini_client = genai.Client(api_key=api_key)
+        except Exception as e:
+            error_message = f"API initialization error: {e}"
+
+    # Pantry items
+    all_available_items = Item.objects.filter(user=request.user, status='available').order_by('name')
+    expiring_items = all_available_items.filter(expiration_date__lte=seven_days_from_now)
+    other_items = all_available_items.exclude(id__in=expiring_items.values_list('id', flat=True))
+
+    suggested_recipes = []
+    selected_item_ids = []
+
+    if request.method == 'POST':
+        selected_item_ids = request.POST.getlist('ingredients')
+        selected_items = Item.objects.filter(id__in=selected_item_ids)
+
+        # Create lists for prompting
+        expiring_list = [f"{item.name} ({item.quantity} available, EXPIRING SOON)" for item in selected_items if item in expiring_items]
+        regular_list = [f"{item.name} ({item.quantity} available)" for item in selected_items if item not in expiring_items]
+        ingredient_prompt_text = ", ".join(expiring_list + regular_list)
+
+        if not ingredient_prompt_text:
+            error_message = "Please select at least one ingredient to generate recipes."
+        elif not gemini_client:
+            pass
+        else:
+            # --- Schema Definitions ---
+            RecipeIngredientSchema = types.Schema(
+                type=types.Type.OBJECT,
+                properties={
+                    "item_name": types.Schema(type=types.Type.STRING),
+                    "amount_required": types.Schema(type=types.Type.INTEGER),
+                    "unit": types.Schema(type=types.Type.STRING)
+                },
+                required=["item_name", "amount_required", "unit"]
+            )
+
+            SingleRecipeSchema = types.Schema(
+                type=types.Type.OBJECT,
+                properties={
+                    "title": types.Schema(type=types.Type.STRING),
+                    "description": types.Schema(type=types.Type.STRING),
+                    "steps": types.Schema(type=types.Type.STRING),
+                    "required_ingredients": types.Schema(type=types.Type.ARRAY, items=RecipeIngredientSchema),
+                    "full_ingredient_list": types.Schema(type=types.Type.ARRAY, items=types.Schema(type=types.Type.STRING))
+                },
+                required=["title", "description", "steps", "required_ingredients", "full_ingredient_list"]
+            )
+
+            RecipeListSchema = types.Schema(
+                type=types.Type.OBJECT,
+                properties={
+                    "recipes": types.Schema(type=types.Type.ARRAY, items=SingleRecipeSchema)
+                },
+                required=["recipes"]
+            )
+
+            # --- System Instruction ---
+            system_instruction = (
+                "You are a professional chef. Generate 3 simple, creative recipes using the provided ingredients. "
+                "Prioritize items marked as 'EXPIRING SOON'. "
+                "You may also include common pantry ingredients if needed. "
+                "'required_ingredients' should only include the ingredients explicitly selected by the user. "
+                "'full_ingredient_list' should include all ingredients used, including staples or extras."
+            )
+
+            prompt = (
+                f"Generate 3 distinct recipes using the selected ingredients: {ingredient_prompt_text}. "
+                "Include other common ingredients if needed. Steps should be a single comma-separated string. "
+                "List the selected ingredients in 'required_ingredients', and all ingredients in 'full_ingredient_list'."
+            )
+
+            try:
+                response = exponential_backoff_call(
+                    client=gemini_client,
+                    model='gemini-2.5-flash',
+                    contents=prompt,
+                    config=types.GenerateContentConfig(
+                        response_mime_type="application/json",
+                        response_schema=RecipeListSchema,
+                        system_instruction=system_instruction
+                    )
+                )
+
+                recipe_list_data = json.loads(response.text)
+                if not recipe_list_data.get('recipes'):
+                    error_message = "API returned no recipes. Try different ingredients."
+
+                for recipe_data in recipe_list_data.get('recipes', []):
+                    # Save recipe
+                    new_recipe = Recipe.objects.create(
+                        title=recipe_data['title'],
+                        description=recipe_data['description'],
+                        steps=recipe_data['steps'],
+                        full_ingredients_json=json.dumps(recipe_data.get('full_ingredient_list', []))
+                    )
+
+                    # Link only the selected items for tracking
+                    for req_item in recipe_data.get('required_ingredients', []):
+                        item_name = req_item.get('item_name', '')
+                        amount = req_item.get('amount_required', 1)
+                        try:
+                            pantry_item = selected_items.get(name__iexact=item_name)
+                            RecipeItem.objects.create(recipe=new_recipe, item=pantry_item, amount_required=amount)
+                        except Item.DoesNotExist:
+                            pass
+
+                    suggested_recipes.append({
+                        'recipe': new_recipe,
+                        'full_ingredients_list': recipe_data.get('full_ingredient_list', [])
+                    })
+
+            except Exception as e:
+                error_message = f"Error generating recipes: {e}"
+
+    context = {
+        'title': 'AI Recipe Generator',
+        'user_items': expiring_items.union(other_items),
+        'suggested_recipes': suggested_recipes,
+        'error_message': error_message,
+        'selected_item_ids': selected_item_ids if request.method == 'POST' else [],
+        'today': today,
+    }
+    return render(request, 'recipe/recipe_suggest.html', context)

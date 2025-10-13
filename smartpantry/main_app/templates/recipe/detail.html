@@ -48,7 +48,7 @@
             </div>
             
             <div class="action-area">
-                <form method="post" action="{% url 'use_recipe_items' recipe_pk=recipe.pk %}">
+                <form method="post" action="{% url 'cook_and_save_recipe' recipe_pk=recipe.pk %}">
                     {% csrf_token %}
                     <button type="submit" class="btn-primary">
                         ✅ Cooked This & Update Pantry

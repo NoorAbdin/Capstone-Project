@@ -75,12 +75,13 @@
                             {% endfor %}
                         </ol>
 
-                        <form method="post" action="{% url 'use_recipe_items' recipe_pk=recipe_data.recipe.pk %}" style="margin-top: 20px;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-success btn-block consume-btn">
-                                ✅ Confirm: I'm Cooking This & Updating My Pantry
-                            </button>
-                        </form>
+                      <form method="post" action="{% url 'cook_and_save_recipe' recipe_pk=recipe_data.recipe.pk %}" style="margin-top: 20px;">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-success btn-block consume-btn">
+        ✅ Cook & Save Recipe
+    </button>
+</form>
+
 
                     </div>
                 {% endfor %}

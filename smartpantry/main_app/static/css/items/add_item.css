@@ -14,7 +14,7 @@
 }
 
 .item-form-card .auth-title {
-    color: var(--color-primary-green);
+    color: var(--color-text-dark);
     margin-bottom: 10px;
 }
 
@@ -63,7 +63,7 @@
 }
 
 .item-form-card .auth-link {
-    color: var(--color-primary-green);
+    color: var(--color-dark-text);
     text-decoration: none;
     font-weight: 600;
 }

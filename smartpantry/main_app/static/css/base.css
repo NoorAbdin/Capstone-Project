@@ -1,9 +1,9 @@
 /* --- Global Variables and Base Reset --- */
 :root {
     --color-primary-green: #5cb85c;
-    --color-primary-orange: #f0ad4e;
+    --color-primary-orange: #cc5500;
     --color-background-light: #f9f7f5;
-    --color-text-dark: #304419; /* Updated dark green/brown */
+    --color-text-dark: #2e4712; 
     --color-text-muted: #666;
     --color-shadow: rgba(0, 0, 0, 0.08);
 }
@@ -93,7 +93,7 @@ body {
 }
 
 .btn-primary:hover {
-    background-color: #e59434;
+    background-color: #a34400;
 }
 
 .btn-secondary {
