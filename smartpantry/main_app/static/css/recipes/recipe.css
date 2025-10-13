@@ -139,6 +139,82 @@
     line-height: 1.5;
 }
 
+.filter-controls {
+    margin: 20px 0; /* Add some space above and below */
+    padding: 15px;
+    background-color: #f9f9f9; /* Light background for contrast */
+    border-radius: 8px; /* Soft rounded corners */
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Form element to hold the controls */
+.ingredient-filter-form {
+    display: flex; /* Use flexbox for horizontal alignment */
+    align-items: center; /* Vertically center the items */
+    gap: 15px; /* Space between the label, select, and link */
+}
+
+/* Style for the label text */
+.filter-label {
+    font-size: 1em;
+    font-weight: 600; /* Slightly bolder for prominence */
+    color: #333;
+    /* No need for margin as 'gap' handles spacing */
+}
+
+/* Style for the dropdown select box */
+.filter-select {
+    padding: 10px 15px;
+    border: 2px solid #ccc;
+    border-radius: 6px;
+    font-size: 1em;
+    color: #555;
+    background-color: #fff;
+    cursor: pointer; /* Indicates it's interactive */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    min-width: 200px; /* Ensure it's wide enough for text */
+    appearance: none; /* Remove default arrow on some browsers */
+    /* Add a custom arrow if desired (advanced CSS) */
+}
+
+.filter-select:hover,
+.filter-select:focus {
+    border-color: #007bff; /* Highlight on hover/focus */
+    outline: none; /* Remove default focus outline */
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2); /* Soft blue glow */
+}
+
+/* Style for the "Clear Filter" link */
+.clear-filter-link {
+    text-decoration: none; /* Remove underline */
+    color: #dc3545; /* A strong color for the action (red/danger) */
+    font-size: 0.95em;
+    font-weight: 500;
+    padding: 5px 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.clear-filter-link:hover {
+    background-color: #dc3545;
+    color: #fff;
+    text-decoration: underline;
+}
+
+/* Optional: Make the select look more like a button on very small screens */
+@media (max-width: 600px) {
+    .ingredient-filter-form {
+        flex-direction: column; /* Stack items vertically on smaller screens */
+        align-items: flex-start;
+    }
+
+    .filter-select {
+        width: 100%; /* Take up full width */
+        min-width: initial;
+    }
+}
+
 /* Mobile Adjustments */
 @media (max-width: 768px) {
     .recipe-index-header h1 {
