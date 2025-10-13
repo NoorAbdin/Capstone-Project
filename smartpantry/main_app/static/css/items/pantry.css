@@ -110,6 +110,23 @@
     background-color: #fff8e1; 
 }
 
+.status-text {
+    font-weight: 600;
+    margin-left: 8px;
+}
+
+.status-danger-text {
+    color: #a70000;  /* أحمر */
+}
+
+.status-warning-text {
+    color: #b38f00;  /* أصفر */
+}
+
+.status-safe-text {
+    color: #2e7d32;  /* أخضر */
+}
+
 /* Action Buttons */
 .action-buttons {
     display: flex;
