@@ -187,13 +187,13 @@ def recipe_saved(request):
     return render(request, 'recipe/recipes.html', context)
 
 
-
 # --- NEW VIEW: Recipe Detail ---
 @login_required
 def recipe_detail(request, recipe_pk):
     """
     Displays the full details of a saved recipe.
     """
+    
     # 1. Fetch the recipe object
     recipe = get_object_or_404(Recipe, pk=recipe_pk)
     

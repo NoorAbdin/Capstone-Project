@@ -44,6 +44,8 @@
             </ul>
             
             <a href="{% url 'my_pantry' %}" class="card-link">View All Items</a>
+            <a href="{% url 'recipe_suggest' %}" class="card-link">Generete Recipes</a>
+
         </div>
 
         <div class="card recipes-card">
@@ -71,11 +73,6 @@
         <a href="{% url 'item_create' %}" class="action-btn add-item-btn">
             <span class="btn-icon">+</span>
             Add New Item
-        </a>
-        
-        <a href="#" class="action-btn manage-recipes-btn">
-            <span class="btn-icon">⚙️</span>
-            Manage Recipes
         </a>
         
     </section>
