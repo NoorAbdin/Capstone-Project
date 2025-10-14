@@ -47,24 +47,26 @@
             <a href="{% url 'recipe_suggest' %}" class="card-link">Generete Recipes</a>
 
         </div>
-
-        <div class="card recipes-card">
-            <div class="card-header">
-                <span class="card-icon recipes-icon">🍽️</span>
-                <h2>Recipes To Make Now</h2>
+       <div class="card">
+       <div class="recipe-grid-small">
+         <div class="card-header">
+                <span class="card-icon recipe-emoji">🍽️</span>
+                <h2>Explore Recipes</h2>
             </div>
-            
-            <div class="recipe-grid-small">
-                <div class="recipe-item">
-                    <span class="recipe-emoji">🍅</span> Tomato Soup
-                </div>
-                <div class="recipe-item">
-                    <span class="recipe-emoji">🥕</span> Veggie Stir-Fry
-                </div>
-            </div>
-            
-            <a href="#" class="card-link">See More Suggested Recipes</a>
-        </div>
+    {% for recipe in suggested_recipes %}
+    <div class="recipe-item">
+        <a href="{% url 'recipe_detail' recipe_pk=recipe.pk %}" class="recipe">
+           {{ recipe.title }}
+        </a>
+    </div>
+    {% empty %}
+    <div class="recipe-item placeholder">
+        No suggested recipes right now.
+    </div>
+    {% endfor %}
+</div>
+ <a href="{% url 'recipes' %}" class="card-link">All Recipes</a>
+</div>
 
     </section>
 

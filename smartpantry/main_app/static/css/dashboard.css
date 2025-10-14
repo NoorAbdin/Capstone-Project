@@ -64,12 +64,6 @@
     margin-right: 10px;
 }
 
-/* Specific Card Styling */
-
-/* Expiring Items List */
-.expiring-card {
-    /* Style for the Expiring Soon card */
-}
 
 .expiring-list {
     list-style: none;
@@ -104,11 +98,6 @@
     color:#cc5500;
 }
 
-/* Recipes Card */
-.recipes-card {
-    /* Style for the Recipes card */
-}
-
 .recipe-grid-small {
     display: flex;
     flex-direction: column;
@@ -133,6 +122,14 @@
     margin-right: 5px;
 }
 
+.recipe{
+text-align: left;
+text-decoration: none;
+color: #cc5500;
+}
+.recipe:hover{
+    font-weight: bold;
+}
 
 .card-link {
     display: block;

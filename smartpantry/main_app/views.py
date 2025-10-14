@@ -65,10 +65,13 @@ def dashboard(request):
         expiration_date__lte=seven_days_from_now
     ).order_by('expiration_date')[:3] 
 
+    suggested_recipes = Recipe.objects.all().prefetch_related('recipeitem_set__item')[:3]
+
     context = {
         'title': 'User Dashboard',
         'today': today,
         'expiring_soon': expiring_soon_items, 
+        'suggested_recipes': suggested_recipes,
     }
     return render(request, 'user_dashboard.html', context)
 
