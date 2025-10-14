@@ -34,10 +34,7 @@ urlpatterns = [
    path('recipes/suggest/', views.recipe_suggest, name='recipe_suggest'),
    path('recipes/<int:recipe_pk>/', views.recipe_detail, name='recipe_detail'),
    path('recipe/', views.recipe_saved, name='recipes'),
-   #path('recipe/save/<int:recipe_pk>/', views.recipe_confirm_save, name='recipe_confirm_save'),
-   
- 
-   # used-items
-   #path('recipe/use/<int:recipe_pk>/', views.use_recipe_items, name='use_recipe_items'), 
    path('recipe/cook-save/<int:recipe_pk>/', views.cook_and_save_recipe, name='cook_and_save_recipe'),
+   path('unsave/<int:recipe_pk>/', views.unsave_recipe, name='unsave_recipe'),
+
 ]

@@ -57,6 +57,12 @@
 
                 <div class="recipe-action">
                     <a href="{% url 'recipe_detail' recipe_pk=recipe.pk %}">View Details</a>
+                     {% if user in recipe.saved_by_users.all %}
+                <form method="POST" action="{% url 'unsave_recipe' recipe.pk %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Unsave</button>
+                </form>
+                {% endif %}
                 </div>
             </div>
             {% endfor %}

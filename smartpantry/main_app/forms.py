@@ -63,3 +63,10 @@ class ItemForm(forms.ModelForm):
             'quantity': 'Quantity (Units)',
             'status': 'Item Status',
         }
+
+
+class ConfirmUnsaveForm(forms.Form):
+    confirm = forms.BooleanField(
+        required=True,
+        label="Check to confirm you want to remove this recipe"
+    )

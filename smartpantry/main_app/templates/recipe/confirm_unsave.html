@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load static %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/recipes/delete.css' %}">
+{% endblock %}
+{% block content %}
+<div class="confirm-delete">
+    <h2>Confirm Remove Recipe</h2>
+    <p>Are you sure you want to remove the recipe: <strong>{{ recipe.title }}</strong>?</p>
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-danger">Yes, remove</button>
+        <a href="{% url 'recipes' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

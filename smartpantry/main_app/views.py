@@ -12,6 +12,7 @@ from django.db import transaction
 from django.contrib.auth import get_user_model, login, logout
 from google import genai
 from google.genai import types
+from .forms import ConfirmUnsaveForm
 
 # Load environment variables
 load_dotenv()
@@ -161,6 +162,29 @@ def recipe_saved(request):
         'current_filter': ingredient_filter or 'all',
     }
     return render(request, 'recipe/recipes.html', context)
+
+# delete recipe
+@login_required
+def unsave_recipe(request, recipe_pk):
+    recipe = get_object_or_404(Recipe, pk=recipe_pk)
+    user = request.user
+
+    if request.method == 'POST':
+        form = ConfirmUnsaveForm(request.POST)
+        if form.is_valid() and form.cleaned_data['confirm']:
+            if user in recipe.saved_by_users.all():
+                recipe.saved_by_users.remove(user)
+                messages.success(request, f"'{recipe.title}' has been removed from your saved recipes.")
+            else:
+                messages.warning(request, f"'{recipe.title}' is not in your saved recipes.")
+            return redirect('recipes')
+    else:
+        form = ConfirmUnsaveForm()
+
+    return render(request, 'recipe/confirm_unsave.html', {
+        'recipe': recipe,
+        'form': form
+    })
 
 
 # --- NEW VIEW: Recipe Detail ---
