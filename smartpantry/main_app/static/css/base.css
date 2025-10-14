@@ -6,6 +6,7 @@
     --color-text-dark: #2e4712; 
     --color-text-muted: #666;
     --color-shadow: rgba(0, 0, 0, 0.08);
+    --expiring-alert: #d9534f;
 }
 
 * {

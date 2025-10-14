@@ -221,41 +221,6 @@ def recipe_detail(request, recipe_pk):
     return render(request, 'recipe/detail.html', context)
 
 
-
-# my-pantry
-@login_required
-def pantry_view(request):
-    today = date.today()
-
-    items = Item.objects.filter(user=request.user, status='available')
-
-    category_filter = request.GET.get('category')
-    if category_filter and category_filter != 'all':
-        items = items.filter(category=category_filter)
-
-    search_query = request.GET.get('search')
-    if search_query:
-
-        items = items.filter(name__icontains=search_query)
-
-    sort_by = request.GET.get('sort_by', 'expiring')
-    
-    if sort_by == 'name':
-        items = items.order_by('name')
-    elif sort_by == 'added':
-        items = items.order_by('-date_added')
-    else: 
-        items = items.order_by('expiration_date')
-
-    context = {
-        'title': 'My Pantry Inventory',
-        'items': items,
-        'today': today,
-        'status_choices': Item.STATUS_CHOICES,
-    }
-    return render(request, 'pantry.html', context)
-
-
 # register
 def register(request):
     if request.method == 'POST':
