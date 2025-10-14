@@ -12,7 +12,7 @@ from django.db import transaction
 from django.contrib.auth import get_user_model, login, logout
 from google import genai
 from google.genai import types
-from .forms import ConfirmUnsaveForm
+
 
 # Load environment variables
 load_dotenv()
@@ -21,6 +21,7 @@ api_key = os.getenv('_api_key_', '').strip()  # ضع هنا اسم مفتاحك 
 # Models & Forms
 from .models import Item, Recipe, RecipeItem 
 from .forms import CustomUserCreationForm, ItemForm
+from .forms import ConfirmUnsaveForm
 
 User = get_user_model()
 

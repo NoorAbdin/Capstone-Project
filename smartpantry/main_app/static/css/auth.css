@@ -112,6 +112,28 @@
     border: 1px solid #f5c6cb;
 }
 
+.auth-card input[type="email"] {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+}
+
+.auth-card a {
+    display: inline-block;
+    margin-top: 15px;
+    color: var(--color-primary-orange);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.auth-card a:hover {
+    text-decoration: underline;
+}
+
 /* Responsive adjustment for small screens */
 @media (max-width: 500px) {
     .auth-card {
