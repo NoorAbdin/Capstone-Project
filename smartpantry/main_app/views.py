@@ -75,15 +75,11 @@ def dashboard(request):
 @login_required
 @transaction.atomic
 def cook_and_save_recipe(request, recipe_pk):
-    """
-    Combines: consuming ingredients and saving recipe for user.
-    """
     recipe = get_object_or_404(Recipe, pk=recipe_pk)
     user = request.user
-    messages_list = []
 
     if request.method == 'POST':
-        # --- 1. Consume pantry items ---
+        # 1️⃣ استهلاك المكونات
         required_items = RecipeItem.objects.filter(recipe=recipe)
         items_consumed_count = 0
 
@@ -96,25 +92,21 @@ def cook_and_save_recipe(request, recipe_pk):
                     pantry_item.quantity -= amount_used
                     if pantry_item.quantity == 0:
                         pantry_item.status = 'used'
-                        messages_list.append(f"'{pantry_item.name}' completely used up!")
+                        messages.info(request, f"'{pantry_item.name}' completely used up!")
                     pantry_item.save()
                     items_consumed_count += 1
                 else:
-                    messages_list.append(f"Could not fully consume {pantry_item.name}. Insufficient quantity.")
+                    messages.warning(request, f"Could not fully consume {pantry_item.name}. Insufficient quantity.")
 
         if items_consumed_count > 0:
             messages.success(request, f"Pantry updated! Ingredients for '{recipe.title}' have been consumed.")
         else:
             messages.warning(request, "Pantry not updated. No available ingredients or insufficient quantities.")
 
-        # --- 2. Save recipe for the user ---
-        # Link recipe to all user's selected items (or at least one to mark it as saved)
-        for item in Item.objects.filter(user=user):
-            RecipeItem.objects.get_or_create(recipe=recipe, item=item, defaults={'amount_required': 0})
-
+        # 2️⃣ حفظ الوصفة للمستخدم
+        recipe.saved_by_users.add(user)
         messages.success(request, f"'{recipe.title}' has been saved to your recipes.")
 
-        # Redirect to recipes page
         return redirect('recipes')
 
     return redirect('recipe_suggest')
@@ -123,64 +115,48 @@ def cook_and_save_recipe(request, recipe_pk):
 # Recipe view
 @login_required
 def recipe_saved(request):
-    """
-    Lists recipes explicitly saved by the user, sorted by pantry match score,
-    and allows filtering by a specific ingredient.
-    """
     user = request.user
-    
-    # 1. Get user's pantry item names for scoring (case-insensitive set)
+
+    # 1️⃣ هان التغيير الأساسي
+    all_recipes = Recipe.objects.filter(saved_by_users=user).prefetch_related('recipeitem_set__item')
+
+    # باقي الكود كما هو لحساب التطابق والفلترة
     user_pantry_items = Item.objects.filter(user=user).values_list('name', flat=True)
     user_pantry_set = set(name.lower() for name in user_pantry_items)
-    
-    # 2. Base Query: Find all unique Recipe IDs linked to the current user's items.
-    user_recipe_ids = RecipeItem.objects.filter(item__user=user).values_list('recipe_id', flat=True).distinct()
-    
-    # 3. Fetch Recipes and required items
-    all_recipes = Recipe.objects.filter(id__in=user_recipe_ids).prefetch_related('recipeitem_set__item')
 
-    # --- Setup for Filtering and Scoring ---
     ingredient_filter = request.GET.get('ingredient')
     filtered_recipes = []
     all_ingredients_in_saved_recipes = set()
 
     for recipe in all_recipes:
         recipe_items = recipe.recipeitem_set.all()
-        
-        # Calculate Required Ingredients and Matched Count
         required_ingredients = set(r.item.name.lower() for r in recipe_items)
-        
-        # Add all ingredients from saved recipes to the filter list
+
         for name in required_ingredients:
             all_ingredients_in_saved_recipes.add(name.capitalize())
 
         matched_count = len(required_ingredients.intersection(user_pantry_set))
         total_required = len(required_ingredients)
 
-        # Attach scoring attributes
         recipe.matched_count = matched_count
         recipe.total_required = total_required
         recipe.pantry_match_score = f"{matched_count}/{total_required}"
 
-        # Apply filtering for the current recipe
         if ingredient_filter:
-            # Check if the requested ingredient is in the recipe's required list
             if ingredient_filter.lower() in required_ingredients:
                 filtered_recipes.append(recipe)
         else:
             filtered_recipes.append(recipe)
 
-    # 4. Sorting: Sort the filtered list by the calculated score (highest match first)
     sorted_recipes = sorted(
         filtered_recipes,
-        key=lambda r: (r.matched_count, r.total_required, r.id), # Sort by match, then total, then ID
+        key=lambda r: (r.matched_count, r.total_required, r.id),
         reverse=True
     )
-    
+
     context = {
         'title': 'My Saved Recipes',
         'recipes': sorted_recipes,
-        # Pass the unique ingredient list for the filter dropdown
         'pantry_ingredient_names': sorted(list(all_ingredients_in_saved_recipes)),
         'current_filter': ingredient_filter or 'all',
     }

@@ -34,6 +34,8 @@ class Recipe(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
     steps = models.TextField()
+    saved_by_users = models.ManyToManyField(User, related_name='saved_recipes', blank=True)
+
 
     full_ingredients_json = models.TextField(
         default='[]',
