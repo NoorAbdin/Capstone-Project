@@ -19,7 +19,7 @@ load_dotenv()
 api_key = os.getenv('_api_key_', '').strip()  # ضع هنا اسم مفتاحك الصحيح في .env
 
 # Models & Forms
-from .models import Item, Recipe, RecipeItem 
+from .models import Item, Recipe, RecipeItem
 from .forms import CustomUserCreationForm, ItemForm
 from .forms import ConfirmUnsaveForm
 
@@ -66,7 +66,8 @@ def dashboard(request):
         expiration_date__lte=seven_days_from_now
     ).order_by('expiration_date')[:3] 
 
-    suggested_recipes = Recipe.objects.all().prefetch_related('recipeitem_set__item')[:3]
+    suggested_recipes = Recipe.objects.filter(saved_by_users=request.user).prefetch_related('recipeitem_set__item')[:3]
+
 
     context = {
         'title': 'User Dashboard',
