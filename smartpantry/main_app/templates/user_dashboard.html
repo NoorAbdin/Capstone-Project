@@ -11,7 +11,11 @@
     <section class="dashboard-hero">
         <h1 class="welcome-title">Welcome back, {{ user.username|default:"User" }}!</h1>
         <p class="hero-subtext">Here's your quick snapshot to stop waste and start cooking.</p>
+     <div class="dashboard-header">
+    <a href="{% url 'manage_account' %}" class="btn btn-secondary">Manage Account</a>
+</div>
     </section>
+    
 
     <section class="quick-dashboard-grid">
 

@@ -8,6 +8,8 @@ from dotenv import load_dotenv
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages 
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 from django.db import transaction
 from django.contrib.auth import get_user_model, login, logout
 from google import genai
@@ -239,6 +241,50 @@ def register(request):
         form = CustomUserCreationForm()
     context = {'form': form}
     return render(request, 'register.html', context)
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.models import User
+
+@login_required
+def manage_account(request):
+    user = request.user
+    password_form = PasswordChangeForm(user)
+
+    if request.method == 'POST':
+        if 'update_info' in request.POST:
+            new_username = request.POST.get('username').strip()
+            new_email = request.POST.get('email').strip()
+
+            # تحقق من أن اليوزرنيم غير مستخدم من قبل
+            if User.objects.exclude(pk=user.pk).filter(username=new_username).exists():
+                messages.error(request, 'This username is already taken.')
+            else:
+                user.username = new_username
+                user.email = new_email
+                user.save()
+                messages.success(request, 'Account information updated successfully!')
+                return redirect('manage_account')
+
+        elif 'change_password' in request.POST:
+            password_form = PasswordChangeForm(user, request.POST)
+            if password_form.is_valid():
+                password_form.save()
+                update_session_auth_hash(request, user)  # يبقي المستخدم مسجّل دخول بعد التغيير
+                messages.success(request, 'Password changed successfully!')
+                return redirect('manage_account')
+            else:
+                messages.error(request, 'Please correct the errors below.')
+
+    return render(request, 'manage_account.html', {
+        'user': user,
+        'password_form': password_form,
+    })
+
+
 
 # CRUD for item
 # --- R (Read - List Items) ---

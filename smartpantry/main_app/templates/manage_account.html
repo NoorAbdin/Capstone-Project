@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Manage Account{% endblock %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/manage.css' %}">
+{% endblock %}
+{% block content %}
+<div class="manage-account-container">
+    <h2>Manage Account</h2>
+
+    {% if messages %}
+        <ul class="messages">
+        {% for message in messages %}
+            <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+
+    <!-- ✅ Form لتحديث الاسم والإيميل -->
+    <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="update_info" value="1">
+
+        <label>Username:</label>
+        <input type="text" name="username" value="{{ user.username }}" required>
+
+        <label>Email:</label>
+        <input type="email" name="email" value="{{ user.email }}">
+
+        <button type="submit">Update Info</button>
+    </form>
+
+    <hr>
+
+    <!-- ✅ Form لتغيير كلمة السر -->
+    <h3>Change Password</h3>
+    <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="change_password" value="1">
+        {{ password_form.as_p }}
+        <button type="submit">Change Password</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,107 @@
+/* --- Manage Account Page --- */
+.manage-account-container {
+    max-width: 500px;
+    margin: 40px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px var(--color-shadow);
+}
+
+.manage-account-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+    color: var(--color-text-dark);
+}
+
+.manage-account-container h3 {
+    margin-top: 25px;
+    font-size: 1.3rem;
+    color: var(--color-text-dark);
+}
+
+.manage-account-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.manage-account-container label {
+    font-weight: 600;
+    color: var(--color-text-dark);
+    margin-bottom: 5px;
+}
+
+.manage-account-container input[type="text"],
+.manage-account-container input[type="email"],
+.manage-account-container input[type="password"] {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
+}
+
+.manage-account-container input:focus {
+    outline: none;
+    border-color: var(--color-primary-orange);
+    box-shadow: 0 0 0 3px rgba(204, 85, 0, 0.15);
+}
+
+.manage-account-container button {
+    background-color: var(--color-primary-orange);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.manage-account-container button:hover {
+    background-color: #a34400;
+}
+
+/* Messages (success / error) */
+.messages {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 15px;
+}
+
+.messages li {
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.messages li.success {
+    background-color: #dff0d8;
+    color: #3c763d;
+    border: 1px solid #d6e9c6;
+}
+
+.messages li.error {
+    background-color: #f2dede;
+    color: #a94442;
+    border: 1px solid #ebccd1;
+}
+
+hr {
+    margin: 25px 0;
+    border: none;
+    border-top: 1px solid #eee;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .manage-account-container {
+        padding: 20px;
+        margin: 20px;
+    }
+}

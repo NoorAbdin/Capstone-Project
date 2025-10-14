@@ -20,6 +20,15 @@
     color: #666666;
 }
 
+.dashboard-header {
+    display: flex;
+    justify-content:right;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+
+
 /* --- Quick Dashboard Grid (Cards) --- */
 
 .quick-dashboard-grid {

@@ -12,6 +12,7 @@ urlpatterns = [
 
    # Authentication
    path('register/', views.register, name='register'),
+    path('account/manage/', views.manage_account, name='manage_account'),
 
    # Dashboard
    path('dashboard/', views.dashboard, name='dashboard'), 
