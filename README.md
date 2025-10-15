@@ -137,7 +137,7 @@ API_KEY=your_gemini_api_key
 <pre>
 <code>
 pipenv install psycopg2-binary
-createdb <databasename>
+createdb databasename
 </code>
 </pre>
 <button onclick="navigator.clipboard.writeText('pipenv install psycopg2-binary .\ncreatedb <databasename>')">Copy</button>
