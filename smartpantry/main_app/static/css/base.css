@@ -162,5 +162,15 @@ body {
         gap: 20px;
     }
 
+    .auth-nav{
+        display: flex;
+        margin-top:10px ;
+    }
+
+    .main-nav{
+        display: flex;
+        flex-direction: column;
+    }
+
   
 }

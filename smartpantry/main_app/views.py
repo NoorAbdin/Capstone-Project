@@ -18,7 +18,7 @@ from google.genai import types
 
 # Load environment variables
 load_dotenv()
-api_key = os.getenv('_api_key_', '').strip()  # ضع هنا اسم مفتاحك الصحيح في .env
+api_key = os.getenv('_api_key_', '').strip() 
 
 # Models & Forms
 from .models import Item, Recipe, RecipeItem
@@ -53,6 +53,62 @@ def exponential_backoff_call(client, model, contents, config, max_retries=MAX_RE
                 raise e
     raise Exception("Max retries exceeded for API call.")
 
+# ------------------- AUTHENTICATION -------------------
+
+# register
+def register(request):
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            # This line is correct and logs the user in after successful registration.
+            login(request, user)
+            return redirect('home')
+    else:
+        form = CustomUserCreationForm()
+    context = {'form': form}
+    return render(request, 'register.html', context)
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.models import User
+
+@login_required
+def manage_account(request):
+    user = request.user
+    password_form = PasswordChangeForm(user)
+
+    if request.method == 'POST':
+        if 'update_info' in request.POST:
+            new_username = request.POST.get('username').strip()
+            new_email = request.POST.get('email').strip()
+
+            if User.objects.exclude(pk=user.pk).filter(username=new_username).exists():
+                messages.error(request, 'This username is already taken.')
+            else:
+                user.username = new_username
+                user.email = new_email
+                user.save()
+                messages.success(request, 'Account information updated successfully!')
+                return redirect('manage_account')
+
+        elif 'change_password' in request.POST:
+            password_form = PasswordChangeForm(user, request.POST)
+            if password_form.is_valid():
+                password_form.save()
+                update_session_auth_hash(request, user) 
+                messages.success(request, 'Password changed successfully!')
+                return redirect('manage_account')
+            else:
+                messages.error(request, 'Please correct the errors below.')
+
+    return render(request, 'manage_account.html', {
+        'user': user,
+        'password_form': password_form,
+    })
 
 # ------------------- DASHBOARD -------------------
 @login_required
@@ -79,6 +135,7 @@ def dashboard(request):
     }
     return render(request, 'user_dashboard.html', context)
 
+# ------------------- RECIPE -------------------
 
 @login_required
 @transaction.atomic
@@ -87,7 +144,7 @@ def cook_and_save_recipe(request, recipe_pk):
     user = request.user
 
     if request.method == 'POST':
-        # 1️⃣ استهلاك المكونات
+        # consume items
         required_items = RecipeItem.objects.filter(recipe=recipe)
         items_consumed_count = 0
 
@@ -111,7 +168,7 @@ def cook_and_save_recipe(request, recipe_pk):
         else:
             messages.warning(request, "Pantry not updated. No available ingredients or insufficient quantities.")
 
-        # 2️⃣ حفظ الوصفة للمستخدم
+        # save recipe
         recipe.saved_by_users.add(user)
         messages.success(request, f"'{recipe.title}' has been saved to your recipes.")
 
@@ -125,10 +182,9 @@ def cook_and_save_recipe(request, recipe_pk):
 def recipe_saved(request):
     user = request.user
 
-    # 1️⃣ هان التغيير الأساسي
+   
     all_recipes = Recipe.objects.filter(saved_by_users=user).prefetch_related('recipeitem_set__item')
 
-    # باقي الكود كما هو لحساب التطابق والفلترة
     user_pantry_items = Item.objects.filter(user=user).values_list('name', flat=True)
     user_pantry_set = set(name.lower() for name in user_pantry_items)
 
@@ -170,6 +226,40 @@ def recipe_saved(request):
     }
     return render(request, 'recipe/recipes.html', context)
 
+
+
+# Recipe Detail 
+@login_required
+def recipe_detail(request, recipe_pk):
+    """
+    Displays the full details of a saved recipe.
+    """
+    
+    # Fetch the recipe object
+    recipe = get_object_or_404(Recipe, pk=recipe_pk)
+    
+    # Check if recipe is linked to the user's pantry items 
+    if not RecipeItem.objects.filter(recipe=recipe, item__user=request.user).exists():
+        messages.error(request, "Recipe not found or you are not authorized to view it.")
+        return redirect('recipes')
+
+    # Load the full ingredient list
+    try:
+        full_ingredients = json.loads(recipe.full_ingredients_json)
+    except (json.JSONDecodeError, TypeError):
+        full_ingredients = ["Error loading ingredients."]
+
+    # Get the required pantry items for the recipe for a status check
+    required_pantry_items = RecipeItem.objects.filter(recipe=recipe)
+
+    context = {
+        'title': recipe.title,
+        'recipe': recipe,
+        'full_ingredients': full_ingredients,
+        'required_pantry_items': required_pantry_items,
+    }
+    return render(request, 'recipe/detail.html', context)
+
 # delete recipe
 @login_required
 def unsave_recipe(request, recipe_pk):
@@ -194,96 +284,7 @@ def unsave_recipe(request, recipe_pk):
     })
 
 
-# --- NEW VIEW: Recipe Detail ---
-@login_required
-def recipe_detail(request, recipe_pk):
-    """
-    Displays the full details of a saved recipe.
-    """
-    
-    # 1. Fetch the recipe object
-    recipe = get_object_or_404(Recipe, pk=recipe_pk)
-    
-    # 2. Check if this recipe is linked to the user's pantry items to ensure authorization
-    if not RecipeItem.objects.filter(recipe=recipe, item__user=request.user).exists():
-        messages.error(request, "Recipe not found or you are not authorized to view it.")
-        return redirect('recipes')
-
-    # 3. Load the full ingredient list (which was saved as a JSON string)
-    try:
-        # FIX: The field is now guaranteed to exist and contain a JSON string (default '[]')
-        full_ingredients = json.loads(recipe.full_ingredients_json)
-    except (json.JSONDecodeError, TypeError):
-        full_ingredients = ["Error loading ingredients."]
-
-    # 4. Get the required pantry items for the recipe for a status check
-    required_pantry_items = RecipeItem.objects.filter(recipe=recipe)
-
-    context = {
-        'title': recipe.title,
-        'recipe': recipe,
-        'full_ingredients': full_ingredients,
-        'required_pantry_items': required_pantry_items,
-    }
-    return render(request, 'recipe/detail.html', context)
-
-
-# register
-def register(request):
-    if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            # This line is correct and logs the user in after successful registration.
-            login(request, user)
-            return redirect('home')
-    else:
-        form = CustomUserCreationForm()
-    context = {'form': form}
-    return render(request, 'register.html', context)
-
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.contrib.auth.forms import PasswordChangeForm
-from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.models import User
-
-@login_required
-def manage_account(request):
-    user = request.user
-    password_form = PasswordChangeForm(user)
-
-    if request.method == 'POST':
-        if 'update_info' in request.POST:
-            new_username = request.POST.get('username').strip()
-            new_email = request.POST.get('email').strip()
-
-            # تحقق من أن اليوزرنيم غير مستخدم من قبل
-            if User.objects.exclude(pk=user.pk).filter(username=new_username).exists():
-                messages.error(request, 'This username is already taken.')
-            else:
-                user.username = new_username
-                user.email = new_email
-                user.save()
-                messages.success(request, 'Account information updated successfully!')
-                return redirect('manage_account')
-
-        elif 'change_password' in request.POST:
-            password_form = PasswordChangeForm(user, request.POST)
-            if password_form.is_valid():
-                password_form.save()
-                update_session_auth_hash(request, user)  # يبقي المستخدم مسجّل دخول بعد التغيير
-                messages.success(request, 'Password changed successfully!')
-                return redirect('manage_account')
-            else:
-                messages.error(request, 'Please correct the errors below.')
-
-    return render(request, 'manage_account.html', {
-        'user': user,
-        'password_form': password_form,
-    })
-
+# ------------------- ITEM -------------------
 
 
 # CRUD for item
@@ -365,7 +366,6 @@ def item_delete(request, pk):
     if request.method == 'POST':
         item_name = item.name 
         item.delete()
-        # 🎯 Add the success message here
         messages.success(request, f'"{item_name}" was successfully deleted from your pantry.')
         return redirect('my_pantry')
         
@@ -373,9 +373,8 @@ def item_delete(request, pk):
 
 @login_required
 def item_delete_confirm(request, pk):
-    """
-    Renders the confirmation page before deletion.
-    """
+    
+  #  Renders the confirmation page before deletion.
     item = get_object_or_404(Item, pk=pk, user=request.user)
     
     context = {
@@ -390,7 +389,7 @@ def item_delete_confirm(request, pk):
 def recipe_suggest(request):
    
     load_dotenv()
-    api_key = os.getenv('_api_key_', '').strip()  # Make sure your .env has _api_key_
+    api_key = os.getenv('_api_key_', '').strip()  
 
     today = date.today()
     seven_days_from_now = today + timedelta(days=7)

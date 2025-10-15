@@ -9,7 +9,6 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 class Item(models.Model):
-    # Choices for the 'status' field
     STATUS_CHOICES = [
         ('available', 'Available'),
         ('used','Used'),
@@ -17,9 +16,9 @@ class Item(models.Model):
     
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
-    quantity = models.IntegerField() # Expects an integer
+    quantity = models.IntegerField() 
     category = models.CharField(max_length=50)
-    expiration_date = models.DateField() # Required field
+    expiration_date = models.DateField() 
     status = models.CharField(
         max_length=10, 
         choices=STATUS_CHOICES,
