@@ -49,7 +49,7 @@ The main goal of the application is to reduce food waste, make meal planning eas
 ---
 
 ## 6. Local Setup / Running the Project:
-1️⃣ Fork and Clone the repository
+1. Fork and Clone the repository
 <div style="position: relative;">
 <pre>
 <code>
@@ -60,18 +60,17 @@ cd Capstone-Project
 <button onclick="navigator.clipboard.writeText('git clone https://github.com/NoorAbdin/Capstone-Project.git\ncd Capstone-Project')">Copy</button>
 </div>
 
-2️⃣ Initialize a new virtual environment
+2. Initialize a new virtual environment
 <div style="position: relative;">
 <pre>
 <code>
 pipenv install 
-pipenv install django
 </code>
 </pre>
-<button onclick="navigator.clipboard.writeText('pipenv install django')">Copy</button>
+<button onclick="navigator.clipboard.writeText('pipenv install')">Copy</button>
 </div>
 
-3️⃣ Activate the virtual environment
+3. Activate the virtual environment
 <div style="position: relative;">
 <pre>
 <code>
@@ -81,40 +80,8 @@ pipenv shell
 <button onclick="navigator.clipboard.writeText('pipenv shell')">Copy</button>
 </div>
 
-4️⃣ Start a new Django project
-<div style="position: relative;">
-<pre>
-<code>
-django-admin startproject smartpantry .
-code .
-exit
-</code>
-</pre>
-<button onclick="navigator.clipboard.writeText('django-admin startproject smartpantry .\ncode .\nexit')">Copy</button>
-</div>
 
-5️⃣ Get Your Gemini API
-1. Go to Google AI Studio: Navigate to the official Google AI Studio website.
-
-2. Sign in with your Google account.
-
-3. Get the Key: On the left-hand menu, click on "Get API key" or a similar button.
-
-4. Create Key: Click "Create API key in new project" (recommended for beginners) or select an existing Google Cloud project.
-
-5. Copy and Secure: Your new API key will be instantly generated. Copy it immediately and store it in a secure location. Treat this key like a password; never hardcode it directly into your source code or share it publicly.
-<div style="position: relative;">
-<pre>
-<code>
-pip install google-genai
-export GEMINI_API_KEY="YOUR_API_KEY_HERE"
-</code>
-</pre>
-<button onclick="navigator.clipboard.writeText('pip install google-genai .\nexport GEMINI_API_KEY=<YOUR_API_KEY_HERE> ')">Copy</button>
-</div>
-
-
-6️⃣  Setup Environment Variables
+4. Setup Environment Variables
 <div style="position: relative;">
 <pre>
 <code>
@@ -132,7 +99,7 @@ API_KEY=your_gemini_api_key
 <button onclick="navigator.clipboard.writeText(`SECRET_KEY=your_secret_key_here\nDB_NAME=smartpantry\nDB_USER=postgres\nDB_PASSWORD=your_password\nDB_HOST=localhost\nDB_PORT=5432\nEMAIL_HOST_USER=your_email@gmail.com\nEMAIL_HOST_PASSWORD=your_app_password\nAPI_KEY=your_gemini_api_key`)">Copy</button>
 </div>
 
-7️⃣Connecting to the Database
+5. Connecting to the Database
 <div style="position: relative;">
 <pre>
 <code>
@@ -144,7 +111,7 @@ createdb databasename
 </div>
 
 
-8️⃣ Apply Database Migrations
+6. Apply Database Migrations
 <div style="position: relative;">
 <pre>
 <code>
@@ -155,7 +122,7 @@ python smartpantry/manage.py migrate
 <button onclick="navigator.clipboard.writeText('python manage.py makemigrations\npython manage.py migrate')">Copy</button>
 </div>
 
-9️⃣ Run the Development Server
+7. Run the Development Server
 <div style="position: relative;">
 <pre>
 <code>
