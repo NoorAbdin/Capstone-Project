@@ -64,6 +64,7 @@ cd Capstone-Project
 <div style="position: relative;">
 <pre>
 <code>
+pipenv install 
 pipenv install django
 </code>
 </pre>
@@ -92,45 +93,28 @@ exit
 <button onclick="navigator.clipboard.writeText('django-admin startproject smartpantry .\ncode .\nexit')">Copy</button>
 </div>
 
-5️⃣ Create the App
+5️⃣ Get Your Gemini API
+1. Go to Google AI Studio: Navigate to the official Google AI Studio website.
+
+2. Sign in with your Google account.
+
+3. Get the Key: On the left-hand menu, click on "Get API key" or a similar button.
+
+4. Create Key: Click "Create API key in new project" (recommended for beginners) or select an existing Google Cloud project.
+
+5. Copy and Secure: Your new API key will be instantly generated. Copy it immediately and store it in a secure location. Treat this key like a password; never hardcode it directly into your source code or share it publicly.
 <div style="position: relative;">
 <pre>
 <code>
-python3 manage.py startapp main_app
+pip install google-genai
+export GEMINI_API_KEY="YOUR_API_KEY_HERE"
 </code>
 </pre>
-<button onclick="navigator.clipboard.writeText('python3 manage.py startapp main_app')">Copy</button>
+<button onclick="navigator.clipboard.writeText('pip install google-genai .\nexport GEMINI_API_KEY=<YOUR_API_KEY_HERE> ')">Copy</button>
 </div>
 
-6️⃣ Register the App
-<div style="position: relative;">
-<pre>
-<code>
-INSTALLED_APPS = [
-    'main_app',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.humanize',
-]
-</code>
-</pre>
-<button onclick="navigator.clipboard.writeText(`INSTALLED_APPS = [
-'main_app',
-'django.contrib.admin',
-'django.contrib.auth',
-'django.contrib.contenttypes',
-'django.contrib.sessions',
-'django.contrib.messages',
-'django.contrib.staticfiles',
-'django.contrib.humanize',
-]`)">Copy</button>
-</div>
 
-7️⃣ Setup Environment Variables
+6️⃣  Setup Environment Variables
 <div style="position: relative;">
 <pre>
 <code>
@@ -148,12 +132,24 @@ API_KEY=your_gemini_api_key
 <button onclick="navigator.clipboard.writeText(`SECRET_KEY=your_secret_key_here\nDB_NAME=smartpantry\nDB_USER=postgres\nDB_PASSWORD=your_password\nDB_HOST=localhost\nDB_PORT=5432\nEMAIL_HOST_USER=your_email@gmail.com\nEMAIL_HOST_PASSWORD=your_app_password\nAPI_KEY=your_gemini_api_key`)">Copy</button>
 </div>
 
+7️⃣Connecting to the Database
+<div style="position: relative;">
+<pre>
+<code>
+pipenv install psycopg2-binary
+createdb <databasename>
+</code>
+</pre>
+<button onclick="navigator.clipboard.writeText('pipenv install psycopg2-binary .\ncreatedb <databasename>')">Copy</button>
+</div>
+
+
 8️⃣ Apply Database Migrations
 <div style="position: relative;">
 <pre>
 <code>
-python manage.py makemigrations
-python manage.py migrate
+python smartpantry/manage.py makemigrations
+python smartpantry/manage.py migrate
 </code>
 </pre>
 <button onclick="navigator.clipboard.writeText('python manage.py makemigrations\npython manage.py migrate')">Copy</button>
@@ -163,7 +159,7 @@ python manage.py migrate
 <div style="position: relative;">
 <pre>
 <code>
-python manage.py runserver
+python smartpantry/manage.py runserver
 </code>
 </pre>
 <button onclick="navigator.clipboard.writeText('python manage.py runserver')">Copy</button>
