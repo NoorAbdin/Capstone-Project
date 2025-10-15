@@ -145,15 +145,20 @@ def cook_and_save_recipe(request, recipe_pk):
     user = request.user
 
     if request.method == 'POST':
-        # consume items
         required_items = RecipeItem.objects.filter(recipe=recipe)
         items_consumed_count = 0
 
         for req_item in required_items:
-            pantry_item = req_item.item
+            # 👇 Instead of using req_item.item directly, we find the matching item from the user's pantry
+            pantry_item = Item.objects.filter(
+                user=user,
+                name__iexact=req_item.item.name,
+                status='available'
+            ).first()
+
             amount_used = req_item.amount_required
 
-            if pantry_item.user == user and pantry_item.status == 'available':
+            if pantry_item:
                 if pantry_item.quantity >= amount_used:
                     pantry_item.quantity -= amount_used
                     if pantry_item.quantity == 0:
@@ -162,21 +167,28 @@ def cook_and_save_recipe(request, recipe_pk):
                     pantry_item.save()
                     items_consumed_count += 1
                 else:
-                    messages.warning(request, f"Could not fully consume {pantry_item.name}. Insufficient quantity.")
+                    messages.warning(
+                        request,
+                        f"Not enough quantity for {pantry_item.name}. Required {amount_used}, available {pantry_item.quantity}."
+                    )
+            else:
+                messages.warning(
+                    request,
+                    f"No available pantry item found for {req_item.item.name}."
+                )
 
         if items_consumed_count > 0:
             messages.success(request, f"Pantry updated! Ingredients for '{recipe.title}' have been consumed.")
         else:
-            messages.warning(request, "Pantry not updated. No available ingredients or insufficient quantities.")
+            messages.warning(request, "Pantry not updated. No matching or sufficient ingredients found.")
 
-        # save recipe
+        # ✅ Save recipe to user's saved list
         recipe.saved_by_users.add(user)
         messages.success(request, f"'{recipe.title}' has been saved to your recipes.")
 
         return redirect('recipes')
 
     return redirect('recipe_suggest')
-
 
 # Recipe view
 @login_required
