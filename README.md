@@ -3,7 +3,7 @@
 
 ## 1. Project Description
 **Smart Pantry** is a web application that helps users efficiently organize and manage their kitchen inventory. Users can log grocery items, track expiration dates, and receive suggestions for recipes based on the ingredients they currently have.  
-
+![SmartPantry](assets/images/smartpantry.png)
 The main goal of the application is to reduce food waste, make meal planning easier, and improve daily kitchen management. The interface is designed to be clean, warm, and user-friendly, providing practical features that address real household challenges.
 
 ---
@@ -35,31 +35,116 @@ The main goal of the application is to reduce food waste, make meal planning eas
 
 ![Smart Pantry ERD](assets/images/erd.png)
 
+---
+
 ## 5. Technologies
 
--Backend: Django
+- **Backend:** Django  
+- **Frontend:** HTML, CSS  
+- **Database:** PostgreSQL  
+- **Version Control:** Git, GitHub  
+- **Other Tools:** dbdiagram.io for ERD visualization  
+- **AI Integration:** Gemini API (for recipe generation)
 
--Frontend: HTML, CSS
+---
 
--Database: PostgreSQL 
+## 6. Local Setup / Running the Project
+1. **Fork and Clone the repository:**
+``bash
+git clone https://github.com/NoorAbdin/Capstone-Project.git
+cd Capstone-Project
+2. **Initialize a new virtual environment:**
+pipenv install django
+3. **Activate the virtual environment:**
+pipenv shell
+4. **Start a new Django project within your virtual environment:**
+django-admin startproject smartpantry .
+code.
+exit
+5. **Create the App:**
+python3 manage.py startapp main_app
+6. **Let’s include or "register" it as part of the smartpantry project by adding it to the INSTALLED_APPS in smartpantry/settings.py:**
+INSTALLED_APPS = [
+    # add main_app here
+    'main_app',
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    # add this too
+    'django.contrib.humanize',
+]
+7. **Setup environment variables:**
 
--Version Control: Git, GitHub
+Create a .env file in the root folder.
+Add your Django secret key, database credentials, and Gemini API key:
+SECRET_KEY=your_secret_key_here
+DB_NAME=smartpantry
+DB_USER=postgres
+DB_PASSWORD=your_password
+DB_HOST=localhost
+DB_PORT=5432
+EMAIL_HOST_USER=your_email@gmail.com
+EMAIL_HOST_PASSWORD=your_app_password
+_api_key_=your_gemini_api_key
+8. **Apply database migrations:**
+python manage.py makemigrations
+python manage.py migrate
+9. **Run the development server:**
+python manage.py runserver
 
--Other Tools: dbdiagram.io for ERD visualization
+## 7. Timeline (1 Week)
 
-## 6. Timeline (1 Week)
+| Day   | Tasks                                                                    |
+|-----  |------------------------------------------------------------------------- |
+| Day 1 | Project setup, database design, and creating models                      |
+| Day 2 | Implement user authentication                                            |
+| Day 3 | Implement item expiration sorting and warnings and basic CRUD for items  |
+| Day 4 | Create recipe suggestions and link items to recipes                      |
+| Day 5 | UI design and styling (clean, warm kitchen-themed interface)             |
+| Day 6 | Dashboard and Manage account , Testing                                   |
+| Day 7 |  deployment and final project documentation/review/presentation          |
 
-| Day | Tasks |
-|-----|-------|
-| Day 1 | Project setup, database design, and creating models |
-| Day 2 | Implement user authentication and basic CRUD for items |
-| Day 3 | Implement item expiration sorting and warnings |
-| Day 4 | Create recipe suggestions and link items to recipes |
-| Day 5 | UI design and styling (clean, warm kitchen-themed interface) |
-| Day 6 | Testing, bug fixes, and final adjustments |
-| Day 7 |  and final project review/presentation |
+---
 
-## 7. Future Work
+## 8. Challenges
+During the development of **Smart Pantry**, several challenges were encountered:  
+
+- **AI Integration:** Learning how to use the **Gemini API** for recipe generation and handling API rate limits and errors.  
+- **Ingredient Matching:** Ensuring recipes only link to items available in the user's pantry and handling case-insensitive matches.  
+- **Expiration Logic:** Correctly calculating items expiring soon and providing visual warnings without affecting performance.  
+- **User Experience:** Designing a clean, warm, and intuitive UI that works across devices.  
+- **Error Handling:** Providing meaningful feedback for invalid forms, missing ingredients, or API errors.  
+
+---
+
+## 9. Wins
+Some highlights and successes of the project:  
+
+- Successfully integrated **Gemini API** to generate recipes dynamically based on user-selected ingredients.  
+- Implemented full CRUD functionality for pantry items, including expiration tracking and categorization.  
+- Created a dashboard that displays items expiring soon and suggested recipes.  
+- Developed a responsive, kitchen-themed interface that is user-friendly and visually appealing.  
+- Implemented user authentication, account management, and secure password handling.  
+
+---
+
+## 10. Key Learnings
+Through building this project, the following key lessons were gained:  
+
+- Practical experience in **Django** for full-stack web development.  
+- Integrating third-party APIs (**Gemini AI**) and handling schema-based responses.  
+- How to structure a relational database with multiple relationships (**One-to-Many**, **Many-to-Many**) in Django.  
+- Importance of **user experience and responsive design** in application usability.  
+- How to handle errors gracefully and provide meaningful feedback to users.  
+- Effective use of **environment variables** for secure credentials and API keys.  
+- Strengthened skills in **problem-solving, debugging, and project planning** from start to finish.
+
+---
+
+## 11. Future Work
 In future versions of **Smart Pantry**, the following features can be added:  
 
 - **Notifications/Alerts:** Notify users when items are nearing expiration to further reduce food waste.  

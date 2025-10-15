@@ -116,15 +116,15 @@
 }
 
 .status-danger-text {
-    color: #a70000;  /* أحمر */
+    color: #a70000;  
 }
 
 .status-warning-text {
-    color: #b38f00;  /* أصفر */
+    color: #b38f00; 
 }
 
 .status-safe-text {
-    color: #2e7d32;  /* أخضر */
+    color: #2e7d32;  
 }
 
 /* Action Buttons */

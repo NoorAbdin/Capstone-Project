@@ -2,9 +2,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 80vh; /* Center vertically on the screen */
+    min-height: 80vh; 
     padding: 20px;
-    background-color: #f7f7f7; /* Light background for contrast */
+    background-color: #f7f7f7; 
 }
 
 .auth-card {
@@ -13,7 +13,7 @@
     border-radius: 12px;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
     width: 100%;
-    max-width: 450px; /* Standard form width */
+    max-width: 450px;
     font-family: 'Inter', sans-serif;
 }
 
@@ -26,12 +26,12 @@
 
 .delete-icon {
     font-size: 4rem;
-    color: #d9534f; /* Warning Red */
+    color: #d9534f;
     display: inline-block;
 }
 
 .delete-title {
-    color: #2c3e50; /* Dark Charcoal for titles */
+    color: #2c3e50; 
     font-size: 1.8rem;
     font-weight: 700;
     text-align: center;
@@ -49,7 +49,7 @@
     text-align: center;
     margin: 15px 0 30px;
     font-size: 2rem;
-    color: #cc5500; /* Use a strong accent color for the item name, e.g., Bronze-Orange */
+    color: #cc5500; 
     font-weight: 600;
 }
 
@@ -69,7 +69,7 @@
     gap: 15px;
 }
 
-/* Base Button Styling (You should probably define these globally) */
+/* Base Button Styling */
 .btn {
     text-decoration: none;
     padding: 12px 20px;
@@ -85,7 +85,7 @@
 
 /* Delete Button (Danger) */
 .btn-danger {
-    background-color: #d9534f; /* Primary Deletion Red */
+    background-color: #d9534f;
     color: white;
     box-shadow: 0 4px 8px rgba(217, 83, 79, 0.3);
 }
@@ -95,9 +95,9 @@
     box-shadow: 0 6px 10px rgba(217, 83, 79, 0.4);
 }
 
-/* Cancel Button (Neutral/Secondary) */
+/* Cancel Button */
 .btn-secondary {
-    background-color: #f0f0f0; /* Light Gray */
+    background-color: #f0f0f0; 
     color: #444;
     border-color: #d9d9d9;
 }

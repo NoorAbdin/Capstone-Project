@@ -153,6 +153,10 @@ body {
         gap: 15px;
     }
 
+    .header{
+        margin: 0 -20px;
+    }
+
     .btn-secondary.btn-lg {
         margin-left: 0;
     }

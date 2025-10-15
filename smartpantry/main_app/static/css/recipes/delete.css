@@ -1,9 +1,9 @@
-/* Container صفحة التأكيد */
+/* Container */
 .confirm-delete {
     max-width: 500px;
     margin: 50px auto;
     padding: 30px;
-    background-color: var(--color-background-light); /* خلفية خفيفة */
+    background-color: var(--color-background-light); 
     border: 1px solid var(--color-shadow);
     border-radius: 12px;
     box-shadow: 0 4px 10px var(--color-shadow);
@@ -11,21 +11,18 @@
     font-family: Arial, sans-serif;
 }
 
-/* عنوان الصفحة */
 .confirm-delete h2 {
     color: var(--color-text-dark);
     margin-bottom: 20px;
     font-size: 24px;
 }
 
-/* الوصف */
 .confirm-delete p {
     font-size: 16px;
     color: var(--color-text-muted);
     margin-bottom: 25px;
 }
 
-/* الفورم */
 .confirm-delete form {
     display: flex;
     flex-direction: column;
@@ -33,9 +30,8 @@
     align-items: center;
 }
 
-/* زر الحذف */
 .btn-danger {
-    background-color: var(--expiring-alert); /* الأحمر المستخدم للتنبيهات */
+    background-color: var(--expiring-alert);
     color: white;
     border: none;
     padding: 10px 25px;
@@ -46,13 +42,13 @@
 }
 
 .btn-danger:hover {
-    background-color: #c9302c; /* غامق قليل عند hover */
+    background-color: #c9302c; 
     box-shadow: 0 4px 10px rgba(217, 83, 79, 0.3);
 }
 
-/* زر الإلغاء */
+
 .btn-secondary {
-    background-color: var(--color-primary-orange); /* برتقالي متناسق مع الموقع */
+    background-color: var(--color-primary-orange);
     color: white;
     border: none;
     padding: 10px 25px;
@@ -64,7 +60,7 @@
 }
 
 .btn-secondary:hover {
-    background-color: #b34700; /* غامق شوي عند hover */
+    background-color: #b34700;
     color: white;
 }
 

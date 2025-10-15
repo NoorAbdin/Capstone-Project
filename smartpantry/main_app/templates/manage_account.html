@@ -17,7 +17,7 @@
         </ul>
     {% endif %}
 
-    <!-- ✅ Form لتحديث الاسم والإيميل -->
+    <!--  Form update -->
     <form method="POST">
         {% csrf_token %}
         <input type="hidden" name="update_info" value="1">
@@ -33,7 +33,7 @@
 
     <hr>
 
-    <!-- ✅ Form لتغيير كلمة السر -->
+    <!--  Form password-->
     <h3>Change Password</h3>
     <form method="POST">
         {% csrf_token %}

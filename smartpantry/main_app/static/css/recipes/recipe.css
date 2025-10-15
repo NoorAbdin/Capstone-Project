@@ -3,7 +3,7 @@
     margin: 0 auto;
     padding: 40px 20px;
     font-family: 'Inter', sans-serif;
-    background-color: #f0f3f5; /* Clean, very light gray background */
+    background-color: #f0f3f5;
     min-height: 80vh;
 }
 
@@ -14,7 +14,7 @@
 
 .recipe-index-header h1 {
     font-size: 2.8rem;
-    color: #333333; /* Dark charcoal text */
+    color: #333333; 
     font-weight: 800;
 }
 
@@ -49,7 +49,6 @@
 /* --- Recipe Grid Layout --- */
 .recipe-grid {
     display: grid;
-    /* 3 columns on desktop, adapts down to 1 column */
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 25px;
 }
@@ -57,9 +56,9 @@
 /* --- Individual Recipe Card Styling --- */
 .recipe-card {
     background-color: #ffffff;
-    border: 1px solid #e5e7eb; /* Very subtle border */
+    border: 1px solid #e5e7eb; 
     border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* Lightest shadow */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); 
     transition: box-shadow 0.3s ease, transform 0.2s;
     padding: 25px;
     display: flex;
@@ -68,7 +67,6 @@
 }
 
 .recipe-card:hover {
-    /* Subtle emphasis on hover */
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
 }
@@ -83,10 +81,10 @@
 
 .recipe-meta {
     font-size: 0.85rem;
-    color: #6b7280; /* Neutral gray for secondary text */
+    color: #6b7280;
     margin-top: 10px;
     padding-top: 10px;
-    border-top: 1px dashed #e5e7eb; /* Subtle dashed separator */
+    border-top: 1px dashed #e5e7eb;
 }
 
 .recipe-meta span {
@@ -107,7 +105,7 @@
     text-decoration: none;
     border-radius: 6px;
     font-weight: 600;
-    background-color: #304419; /* Primary Teal */
+    background-color: #304419; 
     color: #fff;
     transition: background-color 0.2s;
 }
@@ -122,7 +120,7 @@
     padding: 80px 30px;
     background-color: #ffffff;
     border-radius: 10px;
-    border: 1px solid #99d8d1; /* Light Teal border */
+    border: 1px solid #99d8d1; 
     max-width: 500px;
     margin: 50px auto;
 }
@@ -140,27 +138,27 @@
 }
 
 .filter-controls {
-    margin: 20px 0; /* Add some space above and below */
+    margin: 20px 0; 
     padding: 15px;
-    background-color: #f9f9f9; /* Light background for contrast */
-    border-radius: 8px; /* Soft rounded corners */
+    background-color: #f9f9f9; 
+    border-radius: 8px; 
     border: 1px solid #ddd;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-/* Form element to hold the controls */
+
 .ingredient-filter-form {
-    display: flex; /* Use flexbox for horizontal alignment */
-    align-items: center; /* Vertically center the items */
-    gap: 15px; /* Space between the label, select, and link */
+    display: flex; 
+    align-items: center; 
+    gap: 15px; 
 }
 
-/* Style for the label text */
+
 .filter-label {
     font-size: 1em;
-    font-weight: 600; /* Slightly bolder for prominence */
+    font-weight: 600; 
     color: #333;
-    /* No need for margin as 'gap' handles spacing */
+
 }
 
 /* Style for the dropdown select box */
@@ -171,24 +169,23 @@
     font-size: 1em;
     color: #555;
     background-color: #fff;
-    cursor: pointer; /* Indicates it's interactive */
+    cursor: pointer; 
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    min-width: 200px; /* Ensure it's wide enough for text */
-    appearance: none; /* Remove default arrow on some browsers */
-    /* Add a custom arrow if desired (advanced CSS) */
+    min-width: 200px; 
+    appearance: none; 
 }
 
 .filter-select:hover,
 .filter-select:focus {
-    border-color: #007bff; /* Highlight on hover/focus */
-    outline: none; /* Remove default focus outline */
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2); /* Soft blue glow */
+    border-color: #007bff; 
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
 }
 
 /* Style for the "Clear Filter" link */
 .clear-filter-link {
-    text-decoration: none; /* Remove underline */
-    color: #dc3545; /* A strong color for the action (red/danger) */
+    text-decoration: none; 
+    color: #dc3545; 
     font-size: 0.95em;
     font-weight: 500;
     padding: 5px 8px;
@@ -202,15 +199,15 @@
     text-decoration: underline;
 }
 
-/* Optional: Make the select look more like a button on very small screens */
+/* responsive */
 @media (max-width: 600px) {
     .ingredient-filter-form {
-        flex-direction: column; /* Stack items vertically on smaller screens */
+        flex-direction: column; 
         align-items: flex-start;
     }
 
     .filter-select {
-        width: 100%; /* Take up full width */
+        width: 100%; 
         min-width: initial;
     }
 }
