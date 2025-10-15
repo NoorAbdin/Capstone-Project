@@ -48,15 +48,15 @@ The main goal of the application is to reduce food waste, make meal planning eas
 
 ---
 
-6. **Local Setup / Running the Project:**
+## 6. Local Setup / Running the Project:
 1️⃣ Fork and Clone the repository
-<div style="position: relative;"> <pre> <code>git clone https://github.com/NoorAbdin/Capstone-Project.git cd Capstone-Project</code> </pre> <button onclick="navigator.clipboard.writeText('git clone https://github.com/NoorAbdin/Capstone-Project.git\ncd Capstone-Project')">Copy</button> </div>
+<div style="position: relative;"> <pre> <code>git clone https://github.com/NoorAbdin/Capstone-Project.git <br/> cd Capstone-Project</code> </pre> <button onclick="navigator.clipboard.writeText('git clone https://github.com/NoorAbdin/Capstone-Project.git\ncd Capstone-Project')">Copy</button> </div>
 2️⃣ Initialize a new virtual environment
 <div style="position: relative;"> <pre> <code>pipenv install django</code> </pre> <button onclick="navigator.clipboard.writeText('pipenv install django')">Copy</button> </div>
 3️⃣ Activate the virtual environment
 <div style="position: relative;"> <pre> <code>pipenv shell</code> </pre> <button onclick="navigator.clipboard.writeText('pipenv shell')">Copy</button> </div>
 4️⃣ Start a new Django project
-<div style="position: relative;"> <pre> <code>django-admin startproject smartpantry . code . exit</code> </pre> <button onclick="navigator.clipboard.writeText('django-admin startproject smartpantry .\ncode .\nexit')">Copy</button> </div>
+<div style="position: relative;"> <pre> <code>django-admin startproject smartpantry <br/>. code <br/>. exit</code> </pre> <button onclick="navigator.clipboard.writeText('django-admin startproject smartpantry .\ncode .\nexit')">Copy</button> </div>
 5️⃣ Create the App
 <div style="position: relative;"> <pre> <code>python3 manage.py startapp main_app</code> </pre> <button onclick="navigator.clipboard.writeText('python3 manage.py startapp main_app')">Copy</button> </div>
 6️⃣ Register the App
