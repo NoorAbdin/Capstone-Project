@@ -50,23 +50,124 @@ The main goal of the application is to reduce food waste, make meal planning eas
 
 ## 6. Local Setup / Running the Project:
 1️⃣ Fork and Clone the repository
-<div style="position: relative;"> <pre> <code>git clone https://github.com/NoorAbdin/Capstone-Project.git <br/> cd Capstone-Project</code> </pre> <button onclick="navigator.clipboard.writeText('git clone https://github.com/NoorAbdin/Capstone-Project.git\ncd Capstone-Project')">Copy</button> </div>
+<div style="position: relative;">
+<pre>
+<code>
+git clone https://github.com/NoorAbdin/Capstone-Project.git
+cd Capstone-Project
+</code>
+</pre>
+<button onclick="navigator.clipboard.writeText('git clone https://github.com/NoorAbdin/Capstone-Project.git\ncd Capstone-Project')">Copy</button>
+</div>
+
 2️⃣ Initialize a new virtual environment
-<div style="position: relative;"> <pre> <code>pipenv install django</code> </pre> <button onclick="navigator.clipboard.writeText('pipenv install django')">Copy</button> </div>
+<div style="position: relative;">
+<pre>
+<code>
+pipenv install django
+</code>
+</pre>
+<button onclick="navigator.clipboard.writeText('pipenv install django')">Copy</button>
+</div>
+
 3️⃣ Activate the virtual environment
-<div style="position: relative;"> <pre> <code>pipenv shell</code> </pre> <button onclick="navigator.clipboard.writeText('pipenv shell')">Copy</button> </div>
+<div style="position: relative;">
+<pre>
+<code>
+pipenv shell
+</code>
+</pre>
+<button onclick="navigator.clipboard.writeText('pipenv shell')">Copy</button>
+</div>
+
 4️⃣ Start a new Django project
-<div style="position: relative;"> <pre> <code>django-admin startproject smartpantry <br/>. code <br/>. exit</code> </pre> <button onclick="navigator.clipboard.writeText('django-admin startproject smartpantry .\ncode .\nexit')">Copy</button> </div>
+<div style="position: relative;">
+<pre>
+<code>
+django-admin startproject smartpantry .
+code .
+exit
+</code>
+</pre>
+<button onclick="navigator.clipboard.writeText('django-admin startproject smartpantry .\ncode .\nexit')">Copy</button>
+</div>
+
 5️⃣ Create the App
-<div style="position: relative;"> <pre> <code>python3 manage.py startapp main_app</code> </pre> <button onclick="navigator.clipboard.writeText('python3 manage.py startapp main_app')">Copy</button> </div>
+<div style="position: relative;">
+<pre>
+<code>
+python3 manage.py startapp main_app
+</code>
+</pre>
+<button onclick="navigator.clipboard.writeText('python3 manage.py startapp main_app')">Copy</button>
+</div>
+
 6️⃣ Register the App
-<div style="position: relative;"> <pre> <code>INSTALLED_APPS = [ 'main_app', 'django.contrib.admin', 'django.contrib.auth', 'django.contrib.contenttypes', 'django.contrib.sessions', 'django.contrib.messages', 'django.contrib.staticfiles', 'django.contrib.humanize', ]</code> </pre> <button onclick="navigator.clipboard.writeText(`INSTALLED_APPS = [ 'main_app', 'django.contrib.admin', 'django.contrib.auth', 'django.contrib.contenttypes', 'django.contrib.sessions', 'django.contrib.messages', 'django.contrib.staticfiles', 'django.contrib.humanize', ]`)">Copy</button> </div>
+<div style="position: relative;">
+<pre>
+<code>
+INSTALLED_APPS = [
+    'main_app',
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.humanize',
+]
+</code>
+</pre>
+<button onclick="navigator.clipboard.writeText(`INSTALLED_APPS = [
+'main_app',
+'django.contrib.admin',
+'django.contrib.auth',
+'django.contrib.contenttypes',
+'django.contrib.sessions',
+'django.contrib.messages',
+'django.contrib.staticfiles',
+'django.contrib.humanize',
+]`)">Copy</button>
+</div>
+
 7️⃣ Setup Environment Variables
-<div style="position: relative;"> <pre> <code>SECRET_KEY=your_secret_key_here DB_NAME=smartpantry DB_USER=postgres DB_PASSWORD=your_password DB_HOST=localhost DB_PORT=5432 EMAIL_HOST_USER=your_email@gmail.com EMAIL_HOST_PASSWORD=your_app_password API_KEY=your_gemini_api_key</code> </pre> <button onclick="navigator.clipboard.writeText(`SECRET_KEY=your_secret_key_here DB_NAME=smartpantry DB_USER=postgres DB_PASSWORD=your_password DB_HOST=localhost DB_PORT=5432 EMAIL_HOST_USER=your_email@gmail.com EMAIL_HOST_PASSWORD=your_app_password API_KEY=your_gemini_api_key`)">Copy</button> </div>
+<div style="position: relative;">
+<pre>
+<code>
+SECRET_KEY=your_secret_key_here
+DB_NAME=smartpantry
+DB_USER=postgres
+DB_PASSWORD=your_password
+DB_HOST=localhost
+DB_PORT=5432
+EMAIL_HOST_USER=your_email@gmail.com
+EMAIL_HOST_PASSWORD=your_app_password
+API_KEY=your_gemini_api_key
+</code>
+</pre>
+<button onclick="navigator.clipboard.writeText(`SECRET_KEY=your_secret_key_here\nDB_NAME=smartpantry\nDB_USER=postgres\nDB_PASSWORD=your_password\nDB_HOST=localhost\nDB_PORT=5432\nEMAIL_HOST_USER=your_email@gmail.com\nEMAIL_HOST_PASSWORD=your_app_password\nAPI_KEY=your_gemini_api_key`)">Copy</button>
+</div>
+
 8️⃣ Apply Database Migrations
-<div style="position: relative;"> <pre> <code>python manage.py makemigrations python manage.py migrate</code> </pre> <button onclick="navigator.clipboard.writeText('python manage.py makemigrations\npython manage.py migrate')">Copy</button> </div>
+<div style="position: relative;">
+<pre>
+<code>
+python manage.py makemigrations
+python manage.py migrate
+</code>
+</pre>
+<button onclick="navigator.clipboard.writeText('python manage.py makemigrations\npython manage.py migrate')">Copy</button>
+</div>
+
 9️⃣ Run the Development Server
-<div style="position: relative;"> <pre> <code>python manage.py runserver</code> </pre> <button onclick="navigator.clipboard.writeText('python manage.py runserver')">Copy</button> </div>
+<div style="position: relative;">
+<pre>
+<code>
+python manage.py runserver
+</code>
+</pre>
+<button onclick="navigator.clipboard.writeText('python manage.py runserver')">Copy</button>
+</div>
 
 ## 7. Timeline (1 Week)
 
